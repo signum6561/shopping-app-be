@@ -10,6 +10,8 @@ services:
       - MYSQL_ROOT_PASSWORD=dat789qu
     volumes:
       - mysql-data:/var/lib/mysql
+    ports:
+      - 3336:3306
 
   web:
     image: shopping-app

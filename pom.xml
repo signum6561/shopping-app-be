@@ -60,6 +60,10 @@
 			<artifactId>jnanoid</artifactId>
 			<version>2.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-mysql</artifactId>
+    	</dependency>
 	</dependencies>
 
 	<build>
@@ -74,6 +78,15 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<configuration>
+					<user>admin</user>
+					<password>dat789qu</password>
+					<url>jdbc:mysql://localhost:3336/quanlybanhang?createDatabaseIfNotExist=true</url>
 				</configuration>
 			</plugin>
 		</plugins>
