@@ -1,9 +1,9 @@
-package com.java.webdevelopment.shopping_app.entity;
+package com.java.webdevelopment.shopping_app.entities;
 
 import lombok.Getter;
 
 public enum OrderStatus {
-    
+
     Canceled("C"),
     OnHold("O"),
     Success("S");

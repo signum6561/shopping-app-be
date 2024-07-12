@@ -99,6 +99,7 @@
 					<user>admin</user>
 					<password>dat789qu</password>
 					<url>jdbc:mysql://localhost:3336/quanlybanhang?createDatabaseIfNotExist=true</url>
+					<cleanDisabled>false</cleanDisabled>
 				</configuration>
 			</plugin>
 		</plugins>

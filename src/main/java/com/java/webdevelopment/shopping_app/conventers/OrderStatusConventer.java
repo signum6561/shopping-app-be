@@ -1,10 +1,10 @@
 package com.java.webdevelopment.shopping_app.conventers;
 
-import com.java.webdevelopment.shopping_app.entity.OrderStatus;
-
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.util.stream.Stream;
+
+import com.java.webdevelopment.shopping_app.entities.OrderStatus;
 
 @Converter(autoApply = true)
 public class OrderStatusConventer implements AttributeConverter<OrderStatus, String> {

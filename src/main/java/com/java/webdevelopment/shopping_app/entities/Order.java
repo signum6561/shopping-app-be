@@ -1,4 +1,4 @@
-package com.java.webdevelopment.shopping_app.entity;
+package com.java.webdevelopment.shopping_app.entities;
 
 import java.util.Date;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package com.java.webdevelopment.shopping_app.entity;
+package com.java.webdevelopment.shopping_app.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
