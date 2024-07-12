@@ -12,12 +12,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "category")
 @AllArgsConstructor 
 @Data
 @Builder
+@EqualsAndHashCode(of = "id")
 public class Category {
 
     @Id
