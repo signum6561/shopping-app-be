@@ -55,11 +55,11 @@ public class Product {
         images.add(image);
     }
 
-    public ProductImage removeProductImage(ProductImage image) {
-        return removeProductImage(image.getId());
+    public ProductImage removeImage(ProductImage image) {
+        return removeImage(image.getId());
     }
 
-    public ProductImage removeProductImage(String id) {
+    public ProductImage removeImage(String id) {
         return images.stream()
                 .filter(i -> i.getId().equals(id))
                 .peek(image -> images.remove(image))
