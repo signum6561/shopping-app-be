@@ -1,14 +1,14 @@
 create table
     category (
-        category_name varchar(255) not null,
         id varchar(255) not null,
+        category_name varchar(255) not null,
         primary key (id)
     ) engine = InnoDB;
 
 create table
     orders (
-        billed_date datetime not null,
         id varchar(255) not null,
+        billed_date datetime not null,
         status varchar(255) not null,
         user_id varchar(255) not null,
         primary key (id)
@@ -16,36 +16,36 @@ create table
 
 create table
     order_detail (
-        quantity integer not null,
         order_id varchar(255) not null,
         product_id varchar(255) not null,
+        quantity integer not null,
         primary key (order_id, product_id)
     ) engine = InnoDB;
 
 create table
     product (
+        id varchar(255) not null,
+        product_name varchar(255) not null,
         amount integer not null,
         price bigint not null,
         category_id varchar(255) not null,
         description varchar(255) not null,
-        id varchar(255) not null,
-        product_name varchar(255) not null,
         primary key (id)
     ) engine = InnoDB;
 
 create table
     product_image (
         id varchar(255) not null,
-        link varchar(255) not null,
         product_id varchar(255) not null,
+        link varchar(255) not null,
         primary key (id)
     ) engine = InnoDB;
 
 create table
     role (
-        admin bit not null,
         id varchar(255) not null,
         role_name varchar(255) not null,
+        admin bit not null,
         primary key (id)
     ) engine = InnoDB;
 
@@ -58,8 +58,8 @@ create table
 
 create table
     user (
-        email varchar(255) not null,
         id varchar(255) not null,
+        email varchar(255) not null,
         password varchar(255) not null,
         username varchar(255) not null,
         primary key (id)

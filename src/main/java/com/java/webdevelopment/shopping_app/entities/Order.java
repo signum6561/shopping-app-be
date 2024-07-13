@@ -22,7 +22,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "Order")
+@Table(name = "orders")
 @Data
 @AllArgsConstructor
 @Builder
@@ -51,9 +51,23 @@ public class Order {
 		items = new HashSet<>();
 	}
 
+	public static OrderBuilder builder() {
+		return new OrderBuilder().items(new HashSet<>());
+	}
+
 	public Long getTotal() {
         return items.stream()
 			.mapToLong(i -> i.getTotal())
 			.sum();
     }
+
+	@Override
+	public String toString() {
+		return "Order [id=" + id +
+				", items=" + items +
+				", status=" + status +
+				", date=" + date +
+				", user=" + user != null ? user.getId() : null
+				+ "]";
+	}
 }

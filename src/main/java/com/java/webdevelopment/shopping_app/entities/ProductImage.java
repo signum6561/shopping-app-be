@@ -29,4 +29,12 @@ public class ProductImage {
      
     @NotNull
 	private String link;
+
+	@Override
+	public String toString() {
+		return "ProductImage [id=" + id + 
+				", product=" + product != null ? product.getId() : null + 
+				", link=" + link + 
+				"]";
+	}
 }

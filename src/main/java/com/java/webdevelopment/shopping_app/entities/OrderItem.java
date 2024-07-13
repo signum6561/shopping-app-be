@@ -40,4 +40,13 @@ public class OrderItem {
     public Long getTotal() {
         return product.getPrice() * Long.valueOf(quantity);
     }
+
+    @Override
+    public String toString() {
+        return "OrderItem [id=" + id +
+                ", order=" + order != null ? order.getId() : null +
+                ", product=" + product != null ? product.getId() : null +
+                ", quantity=" + quantity +
+                "]";
+    }
 }

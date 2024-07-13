@@ -53,6 +53,10 @@ public class Product {
         images = new HashSet<>();
     }
 
+    public static ProductBuilder builder() {
+        return new ProductBuilder().images(new HashSet<>());
+    }
+
     public void addImage(ProductImage image) {
         images.add(image);
     }
@@ -71,5 +75,22 @@ public class Product {
 
     public boolean isInStock() {
         return amount > 0;
+    }
+
+    @Override
+    public String toString() {
+        String imageIds = images == null
+                ? null
+                : images.stream()
+                        .map(i -> i.getId())
+                        .toString();
+        return "Product [id=" + id +
+                ", name=" + name +
+                ", price=" + price +
+                ", amount=" + amount +
+                ", category=" + category != null ? category.getId() : null +
+                ", description=" + description +
+                ", images=" + imageIds +
+                "]";
     }
 }
