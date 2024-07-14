@@ -54,6 +54,12 @@ public class User {
         roles = new HashSet<>();
     }
 
+    public static UserBuilder builder() {
+        return new UserBuilder()
+            .orders(new HashSet<>())
+            .roles(new HashSet<>());
+    }
+
     public void addRole(Role role) {
         roles.add(role);
     }
@@ -74,4 +80,26 @@ public class User {
         return roles.stream()
                 .anyMatch(role -> role.isAdmin());
     }
+
+    @Override
+    public String toString() {
+        String orderIds = orders == null
+                ? null
+                : orders.stream()
+                        .map(o -> o.getId())
+                        .toString();
+        String roleIds = roles == null
+                ? null
+                : roles.stream()
+                        .map(r -> r.getId())
+                        .toString();
+        return "User [id=" + id +
+                ", username=" + username +
+                ", email=" + email +
+                ", password=" + password +
+                ", orders=" + orderIds +
+                ", roles=" + roleIds +
+                "]";
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.java.webdevelopment.shopping_app.entities;
+package com.java.webdevelopment.shopping_app.enums;
 
 import lombok.Getter;
 

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.java.webdevelopment.shopping_app.enums.OrderStatus;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +24,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "Order")
+@Table(name = "orders")
 @Data
 @AllArgsConstructor
 @Builder
@@ -51,9 +53,23 @@ public class Order {
 		items = new HashSet<>();
 	}
 
+	public static OrderBuilder builder() {
+		return new OrderBuilder().items(new HashSet<>());
+	}
+
 	public Long getTotal() {
         return items.stream()
 			.mapToLong(i -> i.getTotal())
 			.sum();
     }
+
+	@Override
+	public String toString() {
+		return "Order [id=" + id +
+				", items=" + items +
+				", status=" + status +
+				", date=" + date +
+				", user=" + user != null ? user.getId() : null
+				+ "]";
+	}
 }

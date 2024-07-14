@@ -43,6 +43,10 @@ public class Role {
 		users = new HashSet<>();
 	}
 
+	public static RoleBuilder builder() {
+		return new RoleBuilder().users(new HashSet<>());
+	}
+
 	public User getUserById(String id) {
 		return users.stream()
 			.filter(u -> u.getId().equals(id))
@@ -64,4 +68,19 @@ public class Role {
 	public boolean hasUser(User user) {
 		return !user.isNullOrEmpty();
 	}
+
+	@Override
+	public String toString() {
+		String userIds = users == null
+				? null
+				: users.stream()
+						.map(u -> u.getId())
+						.toString();
+		return "Role [id=" + id +
+				", name=" + name +
+				", admin=" + admin +
+				", users=" + userIds +
+				"]";
+	}
+	
 }

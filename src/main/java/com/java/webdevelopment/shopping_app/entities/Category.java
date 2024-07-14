@@ -36,7 +36,24 @@ public class Category {
         products = new HashSet<>();
     }
 
+    public static CategoryBuilder builder() {
+        return new CategoryBuilder().products(new HashSet<>());
+    }
+
     public void addProduct(Product product) {
         products.add(product);
     }
+
+    @Override
+    public String toString() {
+        String productIds = products == null
+                ? null
+                : products.stream()
+                        .map(p -> p.getId())
+                        .toString();
+        return "Category [id=" + id +
+                ", name=" + name +
+                ", products=" + productIds + "]";
+    }
+
 }

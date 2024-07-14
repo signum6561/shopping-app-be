@@ -4,7 +4,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.util.stream.Stream;
 
-import com.java.webdevelopment.shopping_app.entities.OrderStatus;
+import com.java.webdevelopment.shopping_app.enums.OrderStatus;
 
 @Converter(autoApply = true)
 public class OrderStatusConventer implements AttributeConverter<OrderStatus, String> {
