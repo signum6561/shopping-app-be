@@ -34,7 +34,7 @@ public class UserRepoTest {
     }
 
     @Test
-    void createNewUser() throws Exception {
+    void createNewUser() {
         User user = User.builder()
             .id("123")
             .username("dummy")
@@ -45,25 +45,25 @@ public class UserRepoTest {
     }
 
     @Test
-    void getAll() throws Exception {
+    void getAll() {
         List<User> users = userRepository.findAll();
         System.out.println(users);
     }
 
     @Test
-    void getUser() throws Exception {
+    void getUser() {
         Optional<User> user = userRepository.findById("123");
         System.out.println(user);
     }
 
     @Test
-    void updateUser() throws Exception {
+    void updateUser() {
         Optional<User> user = userRepository.findById("123");
         user.get().setUsername("Dummy123");
     }
 
     @Test
-    void deleteUser() throws Exception {
+    void deleteUser() {
         userRepository.deleteById("123");
     }
 

@@ -2,8 +2,8 @@ create table
     category (
         id varchar(255) not null,
         category_name varchar(255) not null,
-        created_at timestamp not null,
-        updated_at timestamp not null,
+        -- created_at timestamp not null,
+        -- updated_at timestamp not null,
         primary key (id)
     ) engine = InnoDB;
 
@@ -13,8 +13,8 @@ create table
         billed_date datetime not null,
         status varchar(255) not null,
         user_id varchar(255) not null,
-        created_at timestamp not null,
-        updated_at timestamp not null,
+        -- created_at timestamp not null,
+        -- updated_at timestamp not null,
         primary key (id)
     ) engine = InnoDB;
 
@@ -33,9 +33,9 @@ create table
         amount integer not null,
         price bigint not null,
         category_id varchar(255) not null,
-        description varchar(255) not null,
-        created_at timestamp not null,
-        updated_at timestamp not null,
+        description TEXT not null,
+        -- created_at timestamp not null,
+        -- updated_at timestamp not null,
         primary key (id)
     ) engine = InnoDB;
 
@@ -52,8 +52,8 @@ create table
         id varchar(255) not null,
         role_name varchar(255) not null,
         admin bit not null,
-        created_at timestamp not null,
-        updated_at timestamp not null,
+        -- created_at timestamp not null,
+        -- updated_at timestamp not null,
         primary key (id)
     ) engine = InnoDB;
 
@@ -67,11 +67,11 @@ create table
 create table
     user (
         id varchar(255) not null,
-        email varchar(255) not null,
+        email varchar(255) not null unique,
+        username varchar(255) not null unique,
         password varchar(255) not null,
-        username varchar(255) not null,
-        created_at timestamp not null,
-        updated_at timestamp not null,
+        -- created_at timestamp not null,
+        -- updated_at timestamp not null,
         primary key (id)
     ) engine = InnoDB;
 
