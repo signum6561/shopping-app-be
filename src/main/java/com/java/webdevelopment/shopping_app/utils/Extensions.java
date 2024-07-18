@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class Extensions {
+
     public boolean isNullOrEmpty(Object target) {
         if (target instanceof String) {
             return StringUtil.isNullOrEmpty((String) target);
@@ -16,4 +17,5 @@ public class Extensions {
         }
         return (target == null);
     }
+
 }
