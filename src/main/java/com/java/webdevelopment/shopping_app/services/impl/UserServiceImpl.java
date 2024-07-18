@@ -19,7 +19,7 @@ import com.java.webdevelopment.shopping_app.exceptions.AccessDeniedException;
 import com.java.webdevelopment.shopping_app.exceptions.EmailAlreadyExistException;
 import com.java.webdevelopment.shopping_app.exceptions.UserNotFoundException;
 import com.java.webdevelopment.shopping_app.exceptions.UsernameAlreadyExistException;
-import com.java.webdevelopment.shopping_app.payload.requests.UserRequest;
+import com.java.webdevelopment.shopping_app.payload.UserDTO;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.UserProfileResponse;
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfileResponse createUser(UserRequest request) {
+    public UserProfileResponse createUser(UserDTO request) {
         String username = request.getUsername();
         String email = request.getEmail();
 
@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfileResponse updateUser(String id, User newUser, UserPrincipal authUser) {
+    public UserProfileResponse updateUser(String id, UserDTO newUser, UserPrincipal authUser) {
 
         User user = userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(id));

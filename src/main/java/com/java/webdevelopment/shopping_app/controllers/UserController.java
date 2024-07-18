@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
-import com.java.webdevelopment.shopping_app.entities.User;
+import com.java.webdevelopment.shopping_app.payload.UserDTO;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.UserProfileResponse;
@@ -21,9 +21,13 @@ import com.java.webdevelopment.shopping_app.sercurity.CurrentUser;
 import com.java.webdevelopment.shopping_app.sercurity.UserPrincipal;
 import com.java.webdevelopment.shopping_app.services.UserService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("api/v1/user")
+@SecurityRequirement(name = "shopping-api")
 public class UserController {
 
     @Autowired
@@ -53,7 +57,7 @@ public class UserController {
 	@PutMapping("/{userId}")
 	public ResponseEntity<UserProfileResponse> updateUserByUsername(
 			@PathVariable("userId") String userId,
-			@RequestBody User updateUser, 
+			@Valid @RequestBody UserDTO updateUser, 
 			@CurrentUser UserPrincipal currentUser) {
 		UserProfileResponse response = userService.updateUser(userId, updateUser, currentUser);
 		return new ResponseEntity<>(response, HttpStatus.OK);
