@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.github.javafaker.Faker;
 import com.java.webdevelopment.shopping_app.entities.User;
-import com.java.webdevelopment.shopping_app.payload.requests.UserRequest;
+import com.java.webdevelopment.shopping_app.payload.UserDTO;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.UserProfileResponse;
@@ -38,7 +38,7 @@ public class UserServiceTest {
 
     @Test
     void testCreateUser() {
-        UserRequest request = new UserRequest();
+        UserDTO request = new UserDTO();
         request.setEmail("exmaple777@gmail.com");
         request.setUsername("cuong69");
         request.setPassword(faker.internet().password());
@@ -62,11 +62,11 @@ public class UserServiceTest {
     @Test
     void testUpdateUserByUsername() {
         String id = "MlSpZnV0nhyfrW-_OWj5w";
-        User user = User.builder()
-            .username("thoai29")
-            .email("exagfd7@gmail.com")
-            .build();
-        UserProfileResponse res = userService.updateUser(id, user, userPrincipal);
+        UserDTO userDto = new UserDTO();
+        userDto.setEmail("thoai29");
+        userDto.setPassword("exagfd7@gmail.com");
+        userDto.setUsername("thoai29");
+        UserProfileResponse res = userService.updateUser(id, userDto, userPrincipal);
         System.out.println(res);
     }
 

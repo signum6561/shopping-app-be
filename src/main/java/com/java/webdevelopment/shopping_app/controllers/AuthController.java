@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.java.webdevelopment.shopping_app.payload.UserDTO;
 import com.java.webdevelopment.shopping_app.payload.requests.LoginRequest;
-import com.java.webdevelopment.shopping_app.payload.requests.UserRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.JwtResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.UserProfileResponse;
 import com.java.webdevelopment.shopping_app.sercurity.JWTProvider;
@@ -44,7 +44,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<UserProfileResponse> register(@Valid @RequestBody UserRequest userRequest) {
+	public ResponseEntity<UserProfileResponse> register(@Valid @RequestBody UserDTO userRequest) {
 		UserProfileResponse response = userService.createUser(userRequest);
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}

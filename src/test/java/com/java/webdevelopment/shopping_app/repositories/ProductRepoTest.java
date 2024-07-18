@@ -25,9 +25,9 @@ public class ProductRepoTest {
 
     @Test
     void generateFakeData() {
-        productRepository.deleteAll();
         int n = 20;
         List<Category> listCategories = categoryRepository.findAll();
+        productRepository.deleteAll();
         while (n > 0) {
             n--;
             Product product = Product.builder()

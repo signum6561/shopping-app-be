@@ -1,7 +1,6 @@
 package com.java.webdevelopment.shopping_app.services;
 
-import com.java.webdevelopment.shopping_app.entities.User;
-import com.java.webdevelopment.shopping_app.payload.requests.UserRequest;
+import com.java.webdevelopment.shopping_app.payload.UserDTO;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.UserProfileResponse;
@@ -15,9 +14,9 @@ public interface UserService {
 
     UserProfileResponse getUser(String id);
     
-    UserProfileResponse createUser(UserRequest request);
+    UserProfileResponse createUser(UserDTO request);
 
-    UserProfileResponse updateUser(String id, User newUser, UserPrincipal authUser);
+    UserProfileResponse updateUser(String id, UserDTO newUser, UserPrincipal authUser);
 
     ApiResponse deleteUser(String id);
 
