@@ -3,6 +3,8 @@ package com.java.webdevelopment.shopping_app.constants;
 public class Contants {
     public static final String USER_NOT_FOUND = "User not found";
     public static final String PARAMETERIZED_USER_NOT_FOUND = "Cannot find user with username '@username'";
+    public static final String PRODUCT_NOT_FOUND = "Product not found";
+    public static final String PARAMETERIZED_PRODUCT_NOT_FOUND = "Cannot find product with id '@id'";
     public static final String PARAMETERIZED_USERNAME_ALREADY_EXIST = "Username '@username' already exists";
     public static final String PARAMETERIZED_EMAIL_ALREADY_EXIST = "Email '@email' already exists";
     public static final String UNAUTHORIZED = "Unauthorized";
@@ -15,7 +17,7 @@ public class Contants {
     public static final Integer MIN_PAGE_SIZE_PARAM = 1;
     public static final Integer MAX_PAGE_SIZE_PARAM = 20;
     public static final String MAX_PAGE_SIZE = "Maximum of page size is" +  MAX_PAGE_SIZE_PARAM;
-    public static final String DEFAULT_PAGE_INDEX = "1";
+    public static final String DEFAULT_PAGE_INDEX = "0";
     public static final String DEFAULT_PAGE_SIZE = "5";
 
     public static String USER_NOT_FOUND(String username) {
@@ -40,5 +42,9 @@ public class Contants {
 
     public static String POSITIVE_PAGE_SIZE() {
         return PARAMETERIZED_MUST_POSITIVE .replaceAll("@param", "page size");
+    }
+
+    public static String PRODUCT_NOT_FOUND(String id) {
+        return PARAMETERIZED_PRODUCT_NOT_FOUND.replaceAll("@id", id);
     }
 }
