@@ -1,5 +1,7 @@
 package com.java.webdevelopment.shopping_app.payload;
 
+import com.java.webdevelopment.shopping_app.constants.Contants;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -15,10 +17,12 @@ public class UserDTO {
     @NotEmpty
     private String username;
 
-    @Email
+    @Email(message = Contants.INVALID_EMAIL_FORMAT)
     private String email;
 
-    @Size(min = 8)
+    @Size(
+        min = Contants.MIN_PASSWORD_LENGTH, 
+        message = Contants.INVALID_PASSWORD_LENGTH)
     @NotEmpty
     private String password;
 }

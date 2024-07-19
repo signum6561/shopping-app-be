@@ -19,6 +19,9 @@ public class Contants {
     public static final String MAX_PAGE_SIZE = "Maximum of page size is" +  MAX_PAGE_SIZE_PARAM;
     public static final String DEFAULT_PAGE_INDEX = "0";
     public static final String DEFAULT_PAGE_SIZE = "5";
+    public static final int MIN_PASSWORD_LENGTH = 8;
+    public static final String INVALID_PASSWORD_LENGTH = "Minimum password length is {min} characters";
+    public static final String INVALID_EMAIL_FORMAT = "Invalid email format";
 
     public static String USER_NOT_FOUND(String username) {
         return PARAMETERIZED_USER_NOT_FOUND.replaceAll("@username", username);

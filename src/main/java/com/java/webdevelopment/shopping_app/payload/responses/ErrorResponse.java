@@ -1,21 +1,30 @@
 package com.java.webdevelopment.shopping_app.payload.responses;
 
-import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 public class ErrorResponse {
 
-    private String error;
-    private Instant timestamp;
-    private String message;
+    private HttpStatus status;
+    private String type;
+    private Map<String, String> errors;
 
-    public ErrorResponse(String error, String message) {
-        this.error = error;
-        this.message = message;
-        this.timestamp = Instant.now();
+    public ErrorResponse() {
+        errors = new HashMap<>();
+    }
+
+    public void addError(String field, String message) {
+        errors.put(field, message);
+    }
+
+    public void addDefaultError(String message) {
+        errors.put("defaultMessage", message);
     }
 }
