@@ -30,6 +30,7 @@ public class ProductDTO {
     @NotNull
     private Category category;
     
+    @NotNull
     private String description;
     
     private List<ProductImage> images;

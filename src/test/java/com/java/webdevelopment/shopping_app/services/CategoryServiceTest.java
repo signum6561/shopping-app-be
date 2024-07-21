@@ -4,32 +4,35 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class ProductServiceTest {
+public class CategoryServiceTest {
 
-
-    
     @Test
-    void testCreateProduct() {
+    void testCreateCategory() {
+        
+    }
+
+    @Test
+    void testDeleteCategory() {
 
     }
 
     @Test
-    void testDeleteProduct() {
+    void testGetAllCategory() {
 
     }
 
     @Test
-    void testGetPaginateProduct() {
+    void testGetCategory() {
 
     }
 
     @Test
-    void testGetProduct() {
+    void testGetPaginateCategory() {
 
     }
 
     @Test
-    void testUpdateProduct() {
+    void testUpdateCategory() {
 
     }
 }

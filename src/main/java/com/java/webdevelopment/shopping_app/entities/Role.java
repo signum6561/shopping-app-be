@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.ExtensionMethod;
 
 @Entity
-@Table(name = "role")
+@Table(name = "roles")
 @Data
 @Builder
 @AllArgsConstructor
@@ -32,9 +32,6 @@ public class Role {
 	@NotNull
 	@Column(name = "role_name")
 	private String name;
-
-	@NotNull
-	private boolean admin;
     
 	@ManyToMany(mappedBy = "roles")
 	private Set<User> users;
@@ -69,6 +66,10 @@ public class Role {
 		return !user.isNullOrEmpty();
 	}
 
+	public boolean isRoleAdmin() {
+		return name.equals("ADMIN");
+	}
+
 	@Override
 	public String toString() {
 		String userIds = users == null
@@ -78,7 +79,6 @@ public class Role {
 						.toString();
 		return "Role [id=" + id +
 				", name=" + name +
-				", admin=" + admin +
 				", users=" + userIds +
 				"]";
 	}

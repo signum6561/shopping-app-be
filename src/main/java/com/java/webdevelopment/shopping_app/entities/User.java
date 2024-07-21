@@ -19,7 +19,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Data
 @AllArgsConstructor
 @Builder
@@ -47,7 +47,7 @@ public class User {
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
-        name = "role_detail", 
+        name = "role_details", 
         joinColumns = @JoinColumn(name = "user_id"), 
         inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
@@ -81,7 +81,7 @@ public class User {
 
     public boolean isAdmin() {
         return roles.stream()
-                .anyMatch(role -> role.isAdmin());
+                .anyMatch(role -> role.isRoleAdmin());
     }
 
     @Override

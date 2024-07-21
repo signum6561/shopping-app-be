@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "product_image")
+@Table(name = "product_images")
 @Data
 @AllArgsConstructor
 @Builder

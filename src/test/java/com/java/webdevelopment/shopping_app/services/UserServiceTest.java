@@ -33,7 +33,7 @@ public class UserServiceTest {
             .email("example777@gmail.com")
             .username("cuong69")
             .build();
-        userPrincipal = UserPrincipal.create(user);
+        userPrincipal = new UserPrincipal(user);
     }
 
     @Test
