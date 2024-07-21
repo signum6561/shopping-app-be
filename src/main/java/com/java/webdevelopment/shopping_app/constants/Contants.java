@@ -11,6 +11,7 @@ public class Contants {
     public static final String UNAUTHORIZED = "Unauthorized";
     public static final String ACCESS_DENIED = "You don't have authorization to access this resource";
     public static final String USER_DELETED_SUCCESS = "Deleted user successfully!";
+    public static final String PRODUCT_DELETED_SUCCESS = "Deleted product successfully!";
     public static final String CATEGORY_DELETED_SUCCESS = "Deleted category successfully!";
     public static final String PARAMETERIZED_USER_DELETED_SUCCESS = "Deleted user '@username' successfully!";
     public static final String PARAMETERIZED_MUST_POSITIVE = "The @param must be positive";
