@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: shopping-app
+  datasource:
+    url: 'jdbc:mysql://localhost:3336/quanlybanhang?createDatabaseIfNotExist=true'
+    username: admin
+    password: dat789qu
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+  flyway:
+    cleanDisabled: false
+app:
+  jwtSecret: '"supersecurityandsupersupersecurity"'
+  jwtExpiration: '3600000'

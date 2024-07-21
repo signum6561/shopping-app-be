@@ -1,37 +1,37 @@
 package com.java.webdevelopment.shopping_app.sercurity;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.java.webdevelopment.shopping_app.entities.Role;
 import com.java.webdevelopment.shopping_app.entities.User;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@AllArgsConstructor
-@EqualsAndHashCode(of = "id")
 public class UserPrincipal implements UserDetails {
 
-    private String id;
-	private String username;
-    private String password;
+    private User user;
+
+    public UserPrincipal(User user) {
+        this.user = user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-       return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
-    }
+        Set<Role> roles = user.getRoles();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+        }
 
-    public static UserPrincipal create(User user) {
-        return new UserPrincipal(
-            user.getId(), 
-            user.getUsername(), 
-            user.getPassword());
+        return authorities;
     }
 
     @Override
@@ -56,6 +56,11 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.password;
+        return user.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return user.getUsername();
     }
 }

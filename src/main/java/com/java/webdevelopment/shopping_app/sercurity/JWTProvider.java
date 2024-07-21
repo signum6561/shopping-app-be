@@ -32,7 +32,7 @@ public class JWTProvider {
 		Date now = new Date();
 		
 		String jws = Jwts.builder()
-				.setSubject(userPrincipal.getId().toString())
+				.setSubject(userPrincipal.getUser().getId())
 				.signWith(key)
 				.setExpiration(new Date(now.getTime() + expiration))
 				.compact();

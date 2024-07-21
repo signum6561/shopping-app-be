@@ -15,7 +15,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "category")
+@Table(name = "categories")
 @AllArgsConstructor 
 @Data
 @Builder
