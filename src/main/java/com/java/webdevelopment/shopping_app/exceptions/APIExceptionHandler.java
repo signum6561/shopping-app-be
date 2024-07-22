@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.java.webdevelopment.shopping_app.constants.Contants;
 import com.java.webdevelopment.shopping_app.payload.responses.ErrorResponse;
 
 @RestControllerAdvice
@@ -55,7 +57,7 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 	public ErrorResponse handleAccessDenied(AuthenticationException e) {
 		ErrorResponse response = new ErrorResponse();
 		response.setStatus(HttpStatus.FORBIDDEN);
-		response.setType("access-denied");
+		response.setType("authorization");
 		response.addDefaultError(e.getMessage());
 		return response;
 	}
@@ -85,6 +87,16 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 		});
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+	@ExceptionHandler(AuthorizationDeniedException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public ErrorResponse handleServerError(AuthorizationDeniedException e){
+		ErrorResponse response = new ErrorResponse();
+		response.setStatus(HttpStatus.FORBIDDEN);
+		response.setType("authorization");
+		response.addDefaultError(Contants.ACCESS_DENIED);
+		return response;
+	}
 
 	@ExceptionHandler(RuntimeException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

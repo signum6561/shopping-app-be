@@ -6,8 +6,6 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +27,7 @@ import com.java.webdevelopment.shopping_app.repositories.UserRepository;
 import com.java.webdevelopment.shopping_app.sercurity.UserPrincipal;
 import com.java.webdevelopment.shopping_app.services.UserService;
 import com.java.webdevelopment.shopping_app.utils.IdUtil;
-import com.java.webdevelopment.shopping_app.utils.ValidateUtil;
+import com.java.webdevelopment.shopping_app.utils.PageUtil;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -62,9 +60,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public PageResponse<UserProfileResponse> getPaginateUser(Integer page, Integer pageSize) {
 
-        ValidateUtil.validatePaginateParams(page, pageSize);
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<User> users = userRepository.findAll(pageable);
+        Page<User> users = userRepository.findAll(PageUtil.request(page, pageSize));
         List<UserProfileResponse> userResponse = users.get()
             .map(user -> modelMapper.map(user, UserProfileResponse.class))
             .toList();
