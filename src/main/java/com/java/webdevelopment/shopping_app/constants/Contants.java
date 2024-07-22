@@ -6,12 +6,15 @@ public class Contants {
     public static final String PARAMETERIZED_PRODUCT_NOT_FOUND = "Cannot find product with id '@id'";
     public static final String PARAMETERIZED_CATEGORY_NOT_FOUND = "Cannot find category with id '@id'";
     public static final String PARAMETERIZED_ROLE_NOT_FOUND = "Cannot find role '@roleName'";
+    public static final String PARAMETERIZED_ORDER_NOT_FOUND = "Cannot find order with id @id";
     public static final String PARAMETERIZED_USERNAME_ALREADY_EXIST = "Username '@username' already exists";
     public static final String PARAMETERIZED_EMAIL_ALREADY_EXIST = "Email '@email' already exists";
     public static final String UNAUTHORIZED = "Unauthorized";
     public static final String ACCESS_DENIED = "You don't have authorization to access this resource";
     public static final String USER_DELETED_SUCCESS = "Deleted user successfully!";
+    public static final String PRODUCT_DELETED_SUCCESS = "Deleted product successfully!";
     public static final String CATEGORY_DELETED_SUCCESS = "Deleted category successfully!";
+    public static final String ORDER_DELETED_SUCCESS = "Deleted order successfully!";
     public static final String PARAMETERIZED_USER_DELETED_SUCCESS = "Deleted user '@username' successfully!";
     public static final String PARAMETERIZED_MUST_POSITIVE = "The @param must be positive";
     public static final String NULL_PAGE_INDEX = "The page index should not be null";
@@ -35,6 +38,10 @@ public class Contants {
 
     public static String ROLE_NOT_FOUND(String roleName) {
         return PARAMETERIZED_ROLE_NOT_FOUND.replaceAll("@roleName", roleName);
+    }
+
+    public static String ORDER_NOT_FOUND(String id) {
+        return PARAMETERIZED_ORDER_NOT_FOUND.replaceAll("@id", id);
     }
 
     public static String USERNAME_ALREADY_EXIST(String username) {

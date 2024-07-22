@@ -3,7 +3,6 @@ package com.java.webdevelopment.shopping_app.configs;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 @Configuration
@@ -16,12 +15,5 @@ public class AppConfig {
 	ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
-
-    @Bean
-    PageableHandlerMethodArgumentResolverCustomizer pageableCustomizer() {
-        return (resolver) -> {
-            resolver.setOneIndexedParameters(true);
-        };
-    }
     
 }
