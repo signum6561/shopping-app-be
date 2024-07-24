@@ -8,8 +8,8 @@ public class RoleNotFoundException extends ResourcesNotFoundException {
         super(Contants.DEFAULT_NOT_FOUND("role"));
     }
 
-    public RoleNotFoundException(String name) {
-        super(Contants.ROLE_NOT_FOUND(name));
+    public RoleNotFoundException(String code) {
+        super(Contants.ROLE_NOT_FOUND(code));
     }
 
     @Override

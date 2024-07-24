@@ -1,12 +1,9 @@
-package com.java.webdevelopment.shopping_app.payload;
-
-import java.util.List;
+package com.java.webdevelopment.shopping_app.payload.requests;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,8 +12,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
-
+public class UserRequest {
+    
     @NotEmpty
     private String username;
 
@@ -28,7 +25,4 @@ public class UserDTO {
         message = Contants.INVALID_PASSWORD_LENGTH)
     @NotEmpty
     private String password;
-
-    @NotNull
-    private List<String> roles;
 }

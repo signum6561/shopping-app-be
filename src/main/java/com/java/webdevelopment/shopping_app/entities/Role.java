@@ -5,9 +5,11 @@ import java.util.Set;
 
 import com.java.webdevelopment.shopping_app.utils.Extensions;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.ExtensionMethod;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "role")
 @Data
 @Builder
 @AllArgsConstructor
@@ -30,18 +32,30 @@ public class Role {
 	private String id;
 
 	@NotNull
-	@Column(name = "role_name")
 	private String name;
+
+	@NotNull
+	private String code;
     
 	@ManyToMany(mappedBy = "roles")
 	private Set<User> users;
 
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(
+        name = "role_permission", 
+        joinColumns = @JoinColumn(name = "role_id"), 
+        inverseJoinColumns = @JoinColumn(name = "permission_id"))
+	private Set<Permission> permissions;
+
 	public Role() {
 		users = new HashSet<>();
+		permissions = new HashSet<>();
 	}
 
 	public static RoleBuilder builder() {
-		return new RoleBuilder().users(new HashSet<>());
+		return new RoleBuilder()
+			.users(new HashSet<>())
+			.permissions(new HashSet<>());
 	}
 
 	public User getUserById(String id) {
@@ -62,12 +76,20 @@ public class Role {
 		users.add(user);
 	}
 
-	public boolean hasUser(User user) {
-		return !user.isNullOrEmpty();
+	public boolean hasUsers() {
+		return !users.isNullOrEmpty();
 	}
 
-	public boolean isRoleAdmin() {
-		return name.equals("ADMIN");
+	public boolean isAdminRole() {
+		return code.equals("ADMIN");
+	}
+
+	public boolean isBaseRole() {
+		return code.equals("ADMIN") || code.equals("USER");
+	}
+
+	public void addPermission(Permission permission) {
+		permissions.add(permission);
 	}
 
 	@Override
@@ -79,6 +101,7 @@ public class Role {
 						.toString();
 		return "Role [id=" + id +
 				", name=" + name +
+				", code=" + code +
 				", users=" + userIds +
 				"]";
 	}

@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +17,7 @@ import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
 import com.java.webdevelopment.shopping_app.repositories.CategoryRepository;
 import com.java.webdevelopment.shopping_app.services.CategoryService;
 import com.java.webdevelopment.shopping_app.utils.IdUtil;
-import com.java.webdevelopment.shopping_app.utils.ValidateUtil;
+import com.java.webdevelopment.shopping_app.utils.PageUtil;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -35,10 +33,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public PageResponse<CategoryDTO> getPaginateCategory(Integer page, Integer pageSize) {
-        
-        ValidateUtil.validatePaginateParams(page, pageSize);
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Category> categories = categoryRepository.findAll(pageable);
+    
+        Page<Category> categories = categoryRepository.findAll(PageUtil.request(page, pageSize));
         List<CategoryDTO> categoryDTOs = categories.get()
             .map(category -> modelMapper.map(category, CategoryDTO.class))
             .toList();

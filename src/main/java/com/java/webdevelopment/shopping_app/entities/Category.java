@@ -3,7 +3,6 @@ package com.java.webdevelopment.shopping_app.entities;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -15,7 +14,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "category")
 @AllArgsConstructor 
 @Data
 @Builder
@@ -26,7 +25,6 @@ public class Category {
     private String id;
     
     @NotNull
-	@Column(name="category_name")
 	private String name;
 
     @OneToMany(mappedBy = "category")

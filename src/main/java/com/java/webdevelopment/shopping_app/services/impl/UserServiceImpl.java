@@ -6,19 +6,22 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
+import com.java.webdevelopment.shopping_app.conventers.RoleListConventer;
 import com.java.webdevelopment.shopping_app.entities.Role;
 import com.java.webdevelopment.shopping_app.entities.User;
-import com.java.webdevelopment.shopping_app.exceptions.AccessDeniedException;
 import com.java.webdevelopment.shopping_app.exceptions.EmailAlreadyExistException;
 import com.java.webdevelopment.shopping_app.exceptions.RoleNotFoundException;
+import com.java.webdevelopment.shopping_app.exceptions.SelfDeleteAdminException;
 import com.java.webdevelopment.shopping_app.exceptions.UserNotFoundException;
 import com.java.webdevelopment.shopping_app.exceptions.UsernameAlreadyExistException;
 import com.java.webdevelopment.shopping_app.payload.UserDTO;
+import com.java.webdevelopment.shopping_app.payload.requests.UserRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.UserProfileResponse;
@@ -46,6 +49,16 @@ public class UserServiceImpl implements UserService {
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
+
+        TypeMap<User, UserProfileResponse> userToProfileResponse = modelMapper.createTypeMap(User.class, UserProfileResponse.class);
+        userToProfileResponse.addMappings(
+            mapper -> mapper.using(new RoleListConventer()).map(User::getRoles, UserProfileResponse::setRoles)
+        );
+
+        TypeMap<UserDTO, User>  userDtoToUser = modelMapper.createTypeMap(UserDTO.class, User.class);
+        userDtoToUser.addMappings(
+            mapper -> mapper.skip(User::setRoles)
+        );
     }
 
     @Override
@@ -82,9 +95,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfileResponse createUser(UserDTO request) {
-        String username = request.getUsername();
-        String email = request.getEmail();
+    public UserProfileResponse createUser(UserDTO userDTO) {
+        String username = userDTO.getUsername();
+        String email = userDTO.getEmail();
 
         if(isUsernameExists(username)) {
             throw new UsernameAlreadyExistException(username);
@@ -94,26 +107,50 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistException(email);
         }
 
-        User user = modelMapper.map(request, User.class);
+        User user = modelMapper.map(userDTO, User.class);
         user.setId(IdUtil.generate());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        String baseRoleName = "USER";
-        Role role = roleRepository.findByName(baseRoleName)
-            .orElseThrow(() -> new RoleNotFoundException(baseRoleName));
-        user.addRole(role);
+        for (String roleCode : userDTO.getRoles()) {            
+            Role role = roleRepository.findByCode(roleCode)
+                .orElseThrow(() -> new RoleNotFoundException(roleCode));
+            user.addRole(role);
+        }
+
+        if (!user.hasRoles()) {
+            Role role = roleRepository.findByCode("USER")
+                    .orElseThrow(() -> new RoleNotFoundException("USER"));
+            user.addRole(role);
+        }
+
         User insertedUser = userRepository.save(user);
         return modelMapper.map(insertedUser, UserProfileResponse.class);
     }
 
     @Override
-    public UserProfileResponse updateUser(String id, UserDTO newUser, UserPrincipal authUser) {
+    public UserProfileResponse createUser(UserRequest request) {
+        UserDTO userDTO = modelMapper.map(request, UserDTO.class);
+        return createUser(userDTO);
+    }
+
+    @Override
+    public UserProfileResponse updateUser(String id, UserDTO newUser) {
 
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException(id));
+            .orElseThrow(() -> new UserNotFoundException(id));            
 
-        if(!id.equals(authUser.getUser().getId()) && !user.isAdmin()) {
-            throw new AccessDeniedException();
-        }
+        user.setUsername(newUser.getUsername());
+        user.setEmail(newUser.getEmail());
+        user.setPassword(newUser.getPassword());
+        User updatedUser = userRepository.save(user);
+        return modelMapper.map(updatedUser, UserProfileResponse.class);
+    }
+
+    @Override
+    public UserProfileResponse updateProfile(UserPrincipal userPrincipal, UserDTO newUser) {
+
+        String id = userPrincipal.getId();
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException(id));
 
         user.setUsername(newUser.getUsername());
         user.setEmail(newUser.getEmail());
@@ -124,16 +161,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ApiResponse deleteUser(String id) {
-        
+
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(() -> new UserNotFoundException());
+
+        boolean isUserAdmin = user.isAdmin();
+        if (isUserAdmin) {
+            throw new SelfDeleteAdminException();
+        }
         userRepository.delete(user);
 
         return new ApiResponse(
-            true,
-            Contants.USER_DELETED_SUCCESS(user.getUsername()),
-            HttpStatus.OK
-        );
+                true,
+                Contants.USER_DELETED_SUCCESS(user.getUsername()),
+                HttpStatus.OK);
+    }
+
+    @Override
+    public ApiResponse selfDelete(UserPrincipal userPrincipal) {
+        String id = userPrincipal.getId();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException());
+        userRepository.delete(user);
+
+        return new ApiResponse(
+                true,
+                Contants.USER_DELETED_SUCCESS(user.getUsername()),
+                HttpStatus.OK);
     }
 
     @Override

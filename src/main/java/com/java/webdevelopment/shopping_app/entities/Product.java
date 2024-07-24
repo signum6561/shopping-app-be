@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -18,7 +17,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "products")
+@Table(name = "product")
 @Data
 @AllArgsConstructor
 @Builder
@@ -29,7 +28,6 @@ public class Product {
     private String id;
 
     @NotNull
-    @Column(name = "product_name")
     private String name;
 
     @NotNull

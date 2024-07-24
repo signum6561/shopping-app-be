@@ -1,6 +1,7 @@
 package com.java.webdevelopment.shopping_app.services;
 
 import com.java.webdevelopment.shopping_app.payload.UserDTO;
+import com.java.webdevelopment.shopping_app.payload.requests.UserRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.UserProfileResponse;
@@ -14,11 +15,17 @@ public interface UserService {
 
     UserProfileResponse getUser(String id);
     
-    UserProfileResponse createUser(UserDTO request);
+    UserProfileResponse createUser(UserDTO userDTO);
 
-    UserProfileResponse updateUser(String id, UserDTO newUser, UserPrincipal authUser);
+    UserProfileResponse createUser(UserRequest request);
+
+    UserProfileResponse updateUser(String id, UserDTO newUser);
+
+    UserProfileResponse updateProfile(UserPrincipal userPrincipal, UserDTO newUser);
 
     ApiResponse deleteUser(String id);
+
+    ApiResponse selfDelete(UserPrincipal userPrincipal);
 
     boolean isUsernameExists(String username);
 

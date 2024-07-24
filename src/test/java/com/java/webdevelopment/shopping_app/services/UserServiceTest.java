@@ -66,7 +66,7 @@ public class UserServiceTest {
         userDto.setEmail("thoai29");
         userDto.setPassword("exagfd7@gmail.com");
         userDto.setUsername("thoai29");
-        UserProfileResponse res = userService.updateUser(id, userDto, userPrincipal);
+        UserProfileResponse res = userService.updateUser(id, userDto);
         System.out.println(res);
     }
 
