@@ -5,7 +5,7 @@ public class Contants {
     public static final String PARAMETERIZED_USER_NOT_FOUND = "Cannot find user with username '@username'";
     public static final String PARAMETERIZED_PRODUCT_NOT_FOUND = "Cannot find product with id '@id'";
     public static final String PARAMETERIZED_CATEGORY_NOT_FOUND = "Cannot find category with id '@id'";
-    public static final String PARAMETERIZED_ROLE_NOT_FOUND = "Cannot find role '@roleName'";
+    public static final String PARAMETERIZED_ROLE_NOT_FOUND = "Cannot find role '@roleCode'";
     public static final String PARAMETERIZED_ORDER_NOT_FOUND = "Cannot find order with id @id";
     public static final String PARAMETERIZED_USERNAME_ALREADY_EXIST = "Username '@username' already exists";
     public static final String PARAMETERIZED_EMAIL_ALREADY_EXIST = "Email '@email' already exists";
@@ -14,19 +14,30 @@ public class Contants {
     public static final String USER_DELETED_SUCCESS = "Deleted user successfully!";
     public static final String PRODUCT_DELETED_SUCCESS = "Deleted product successfully!";
     public static final String CATEGORY_DELETED_SUCCESS = "Deleted category successfully!";
+    public static final String ROLE_DELETED_SUCCESS = "Deleted category successfully!";
     public static final String ORDER_DELETED_SUCCESS = "Deleted order successfully!";
     public static final String PARAMETERIZED_USER_DELETED_SUCCESS = "Deleted user '@username' successfully!";
     public static final String PARAMETERIZED_MUST_POSITIVE = "The @param must be positive";
     public static final String NULL_PAGE_INDEX = "The page index should not be null";
     public static final String NULL_PAGE_SIZE = "The page size should not be null";
-    public static final Integer MIN_PAGE_SIZE_PARAM = 1;
-    public static final Integer MAX_PAGE_SIZE_PARAM = 20;
+    public static final String ADMIN_SELF_DELETE = "Admin role cannot self delete";
+    public static final int MIN_PAGE_SIZE_PARAM = 1;
+    public static final int MAX_PAGE_SIZE_PARAM = 20;
     public static final String MAX_PAGE_SIZE = "Maximum of page size is" +  MAX_PAGE_SIZE_PARAM;
     public static final String DEFAULT_PAGE_INDEX = "1";
     public static final String DEFAULT_PAGE_SIZE = "5";
     public static final int MIN_PASSWORD_LENGTH = 8;
     public static final String INVALID_PASSWORD_LENGTH = "Minimum password length is {min} characters";
     public static final String INVALID_EMAIL_FORMAT = "Invalid email format";
+    public static final int COMPACT_ID_LENGTH = 10;
+    public static final int DEFAULT_ID_LENGTH = 21;
+    public static final String[] BASE_USER_PERMISSIONS = {
+        "READ_CATEGORY",
+        "READ_PRODUCT",
+        "READ_ORDER",
+        "CREATE_ORDER",
+        "UPDATE_ORDER",
+    };  
 
     public static String DEFAULT_NOT_FOUND(String resourceName) {
         return PARAMETERIZED_DEFAULT_NOT_FOUND.replaceAll("@resource", resourceName);
@@ -36,8 +47,8 @@ public class Contants {
         return PARAMETERIZED_USER_NOT_FOUND.replaceAll("@username", username);
     }
 
-    public static String ROLE_NOT_FOUND(String roleName) {
-        return PARAMETERIZED_ROLE_NOT_FOUND.replaceAll("@roleName", roleName);
+    public static String ROLE_NOT_FOUND(String code) {
+        return PARAMETERIZED_ROLE_NOT_FOUND.replaceAll("@roleCode", code);
     }
 
     public static String ORDER_NOT_FOUND(String id) {

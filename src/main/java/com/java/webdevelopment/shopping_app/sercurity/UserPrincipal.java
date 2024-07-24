@@ -32,7 +32,10 @@ public class UserPrincipal implements UserDetails {
     public void setAuthorities(Collection<Role> roles) {
         if(authorities.isEmpty()) {
             for (Role role : roles) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getCode()));
+                role.getPermissions()
+                    .stream()
+                    .forEach(p -> authorities.add(new SimpleGrantedAuthority(p.getCode())));
             }
         } 
     }
@@ -65,5 +68,9 @@ public class UserPrincipal implements UserDetails {
     @Override
     public String getUsername() {
         return user.getUsername();
+    }
+
+    public String getId() {
+        return user.getId();
     }
 }

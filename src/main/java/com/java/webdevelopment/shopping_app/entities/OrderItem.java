@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@Table(name = "order_details")
+@Table(name = "order_detail")
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")

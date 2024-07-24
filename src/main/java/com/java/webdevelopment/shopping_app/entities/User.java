@@ -3,6 +3,7 @@ package com.java.webdevelopment.shopping_app.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.java.webdevelopment.shopping_app.utils.Extensions;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -18,13 +19,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.ExtensionMethod;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 @Data
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
+@ExtensionMethod(Extensions.class)
 public class User {
 
     @Id
@@ -48,7 +51,7 @@ public class User {
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
-        name = "role_details", 
+        name = "role_detail", 
         joinColumns = @JoinColumn(name = "user_id"), 
         inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
@@ -65,6 +68,9 @@ public class User {
     }
 
     public void addRole(Role role) {
+        if(roles == null) {
+            roles = new HashSet<>();
+        }
         roles.add(role);
     }
 
@@ -82,7 +88,11 @@ public class User {
 
     public boolean isAdmin() {
         return roles.stream()
-                .anyMatch(role -> role.isRoleAdmin());
+                .anyMatch(role -> role.isAdminRole());
+    }
+
+    public boolean hasRoles() {
+        return !roles.isNullOrEmpty();
     }
 
     @Override

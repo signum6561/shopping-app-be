@@ -90,11 +90,21 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(AuthorizationDeniedException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
-	public ErrorResponse handleServerError(AuthorizationDeniedException e){
+	public ErrorResponse handleAuthDenied(AuthorizationDeniedException e){
 		ErrorResponse response = new ErrorResponse();
 		response.setStatus(HttpStatus.FORBIDDEN);
 		response.setType("authorization");
 		response.addDefaultError(Contants.ACCESS_DENIED);
+		return response;
+	}
+
+	@ExceptionHandler(SelfDeleteAdminException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public ErrorResponse handleSelfDeleteAdmin(SelfDeleteAdminException e){
+		ErrorResponse response = new ErrorResponse();
+		response.setStatus(HttpStatus.CONFLICT);
+		response.setType("invalid-action");
+		response.addDefaultError(e.getMessage());
 		return response;
 	}
 

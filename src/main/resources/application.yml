@@ -9,6 +9,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      jakarta:
+        persistence:
+          schema-generation:
+            scripts:
+              action: create
+              create-target: create.sql
+              create-source: metadata
   data:
     web:
       pageable:

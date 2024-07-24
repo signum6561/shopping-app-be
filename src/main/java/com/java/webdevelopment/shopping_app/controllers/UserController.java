@@ -34,14 +34,21 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/profile")
-	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<UserProfileResponse> getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
 		UserProfileResponse response = userService.getCurrentUser(userPrincipal);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@GetMapping("/users")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/profile")
+	public ResponseEntity<UserProfileResponse> updateUserProfile(
+			@Valid @RequestBody UserDTO updateUser, 
+			@CurrentUser UserPrincipal currentUser) {
+		UserProfileResponse response = userService.updateProfile(currentUser, updateUser);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/")
+	@PreAuthorize("@authz.permission(#root, 'read:user')")
 	public ResponseEntity<PageResponse<UserProfileResponse>> getAllUser(
 		@RequestParam(value = "page", required = false, defaultValue =  Contants.DEFAULT_PAGE_INDEX) Integer page,
 		@RequestParam(value = "size", required = false, defaultValue = Contants.DEFAULT_PAGE_SIZE) Integer pageSize
@@ -51,26 +58,33 @@ public class UserController {
 	}
 
 	@GetMapping("/{userId}")
-	@PreAuthorize("hasRole('MODERATOR')")
+	@PreAuthorize("@authz.permission(#root, 'read:user')")
 	public ResponseEntity<UserProfileResponse> getUser(@PathVariable("userId") String userId) {
 		UserProfileResponse response = userService.getUser(userId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@PutMapping("/{userId}")
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("@authz.permission(#root, 'update:user')")
 	public ResponseEntity<UserProfileResponse> updateUser(
 			@PathVariable("userId") String userId,
 			@Valid @RequestBody UserDTO updateUser, 
 			@CurrentUser UserPrincipal currentUser) {
-		UserProfileResponse response = userService.updateUser(userId, updateUser, currentUser);
+		UserProfileResponse response = userService.updateUser(userId, updateUser);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{userId}")
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") String username) {
-		ApiResponse response = userService.deleteUser(username);
+	@PreAuthorize("@authz.permission(#root, 'delete:user')")
+	public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") String userId) {
+		ApiResponse response = userService.deleteUser(userId);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/self-delete")
+	@PreAuthorize("!hasRole('ADMIN')")
+	public ResponseEntity<ApiResponse> selfDeleteUser(@CurrentUser UserPrincipal userPrincipal) {
+		ApiResponse response = userService.selfDelete(userPrincipal);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
