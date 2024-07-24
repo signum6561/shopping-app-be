@@ -3,6 +3,7 @@ package com.java.webdevelopment.shopping_app.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,6 @@ import com.java.webdevelopment.shopping_app.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
-
 @RestController
 @RequestMapping("api/v1/user")
 @SecurityRequirement(name = "shopping-api")
@@ -34,12 +34,14 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/profile")
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<UserProfileResponse> getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
 		UserProfileResponse response = userService.getCurrentUser(userPrincipal);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@GetMapping("/users")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<PageResponse<UserProfileResponse>> getAllUser(
 		@RequestParam(value = "page", required = false, defaultValue =  Contants.DEFAULT_PAGE_INDEX) Integer page,
 		@RequestParam(value = "size", required = false, defaultValue = Contants.DEFAULT_PAGE_SIZE) Integer pageSize
@@ -49,13 +51,15 @@ public class UserController {
 	}
 
 	@GetMapping("/{userId}")
+	@PreAuthorize("hasRole('MODERATOR')")
 	public ResponseEntity<UserProfileResponse> getUser(@PathVariable("userId") String userId) {
 		UserProfileResponse response = userService.getUser(userId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@PutMapping("/{userId}")
-	public ResponseEntity<UserProfileResponse> updateUserByUsername(
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<UserProfileResponse> updateUser(
 			@PathVariable("userId") String userId,
 			@Valid @RequestBody UserDTO updateUser, 
 			@CurrentUser UserPrincipal currentUser) {
@@ -64,7 +68,8 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{userId}")
-	public ResponseEntity<ApiResponse> deleteUserByUsername(@PathVariable("userId") String username) {
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") String username) {
 		ApiResponse response = userService.deleteUser(username);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

@@ -19,13 +19,23 @@ import com.java.webdevelopment.shopping_app.sercurity.UserPrincipal;
 
 
 @SpringBootTest
-public class ProductServiceTest {
+public class CategoryServiceTest {
 
+<<<<<<< HEAD:src/test/java/com/java/webdevelopment/shopping_app/services/ProductServiceTest.java
     @Autowired
     ProductService productService;
 
     @Autowired
     ProductRepository productRepository;
+=======
+    @Test
+    void testCreateCategory() {
+        
+    }
+
+    @Test
+    void testDeleteCategory() {
+>>>>>>> a76dcbc7950cf60a43cd638ea9b1bf0a19459976:src/test/java/com/java/webdevelopment/shopping_app/services/CategoryServiceTest.java
 
     Faker faker;
 
@@ -45,6 +55,7 @@ public class ProductServiceTest {
     }
 
     @Test
+<<<<<<< HEAD:src/test/java/com/java/webdevelopment/shopping_app/services/ProductServiceTest.java
     void testCreateProduct() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setName("smartphone");
@@ -56,6 +67,9 @@ public class ProductServiceTest {
         ProductDTO res = productService.createProduct(productDTO);
         System.out.println(res);
     }
+=======
+    void testGetAllCategory() {
+>>>>>>> a76dcbc7950cf60a43cd638ea9b1bf0a19459976:src/test/java/com/java/webdevelopment/shopping_app/services/CategoryServiceTest.java
 
     @Test
     void testDeleteProductById() {
@@ -65,6 +79,7 @@ public class ProductServiceTest {
     }
 
     @Test
+<<<<<<< HEAD:src/test/java/com/java/webdevelopment/shopping_app/services/ProductServiceTest.java
     void testGetPaginateProduct() {
         PageResponse<ProductInfoResponse> products = productService.getPaginateProduct(0, 5);
         System.out.println(products);
@@ -88,6 +103,20 @@ public class ProductServiceTest {
         productDTO.setImages(null);
         ProductDTO res= productService.updateProduct(productDTO);
         System.out.println(res);
+=======
+    void testGetCategory() {
+
+    }
+
+    @Test
+    void testGetPaginateCategory() {
+
+    }
+
+    @Test
+    void testUpdateCategory() {
+
+>>>>>>> a76dcbc7950cf60a43cd638ea9b1bf0a19459976:src/test/java/com/java/webdevelopment/shopping_app/services/CategoryServiceTest.java
     }
 
 }

@@ -2,7 +2,6 @@ package com.java.webdevelopment.shopping_app.payload;
 
 import java.util.List;
 
-import com.java.webdevelopment.shopping_app.entities.Category;
 import com.java.webdevelopment.shopping_app.entities.ProductImage;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -28,8 +27,9 @@ public class ProductDTO {
     private Integer amount;
 
     @NotNull
-    private Category category;
+    private CategoryDTO category;
     
+    @NotNull
     private String description;
     
     private List<ProductImage> images;
