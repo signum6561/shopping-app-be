@@ -11,5 +11,7 @@ import com.java.webdevelopment.shopping_app.entities.Role;
 public interface RoleRepository extends JpaRepository<Role, String> {
     
     Optional<Role> findByCode(String code);
+
+    boolean existsByCode(String code);
     
 }

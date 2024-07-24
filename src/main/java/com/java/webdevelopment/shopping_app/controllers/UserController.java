@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
-import com.java.webdevelopment.shopping_app.payload.UserDTO;
+import com.java.webdevelopment.shopping_app.payload.requests.UserInfoRequest;
+import com.java.webdevelopment.shopping_app.payload.requests.UserRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
-import com.java.webdevelopment.shopping_app.payload.responses.UserProfileResponse;
+import com.java.webdevelopment.shopping_app.payload.responses.UserResponse;
 import com.java.webdevelopment.shopping_app.sercurity.CurrentUser;
 import com.java.webdevelopment.shopping_app.sercurity.UserPrincipal;
 import com.java.webdevelopment.shopping_app.services.UserService;
@@ -34,68 +35,67 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/profile")
-	public ResponseEntity<UserProfileResponse> getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-		UserProfileResponse response = userService.getCurrentUser(userPrincipal);
+	public ResponseEntity<UserResponse> getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+		UserResponse response = userService.getCurrentUser(userPrincipal);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@PutMapping("/profile")
-	public ResponseEntity<UserProfileResponse> updateUserProfile(
-			@Valid @RequestBody UserDTO updateUser, 
+	public ResponseEntity<UserResponse> updateUserProfile(
+			@Valid @RequestBody UserInfoRequest updateUser, 
 			@CurrentUser UserPrincipal currentUser) {
-		UserProfileResponse response = userService.updateProfile(currentUser, updateUser);
+		UserResponse response = userService.updateProfile(currentUser, updateUser);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@GetMapping("/")
 	@PreAuthorize("@authz.permission(#root, 'read:user')")
-	public ResponseEntity<PageResponse<UserProfileResponse>> getAllUser(
+	public ResponseEntity<PageResponse<UserResponse>> getAllUser(
 		@RequestParam(value = "page", required = false, defaultValue =  Contants.DEFAULT_PAGE_INDEX) Integer page,
-		@RequestParam(value = "size", required = false, defaultValue = Contants.DEFAULT_PAGE_SIZE) Integer pageSize
+		@RequestParam(value = "perPage", required = false, defaultValue = Contants.DEFAULT_PAGE_SIZE) Integer pageSize
 	) {
-		PageResponse<UserProfileResponse> response = userService.getPaginateUser(page, pageSize);
+		PageResponse<UserResponse> response = userService.getPaginateUser(page, pageSize);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@GetMapping("/{userId}")
 	@PreAuthorize("@authz.permission(#root, 'read:user')")
-	public ResponseEntity<UserProfileResponse> getUser(@PathVariable("userId") String userId) {
-		UserProfileResponse response = userService.getUser(userId);
+	public ResponseEntity<UserResponse> getUser(@PathVariable String userId) {
+		UserResponse response = userService.getUser(userId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@PutMapping("/{userId}")
 	@PreAuthorize("@authz.permission(#root, 'update:user')")
-	public ResponseEntity<UserProfileResponse> updateUser(
+	public ResponseEntity<UserResponse> updateUser(
 			@PathVariable("userId") String userId,
-			@Valid @RequestBody UserDTO updateUser, 
+			@Valid @RequestBody UserRequest updateUser, 
 			@CurrentUser UserPrincipal currentUser) {
-		UserProfileResponse response = userService.updateUser(userId, updateUser);
+		UserResponse response = userService.updateUser(userId, updateUser);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{userId}")
 	@PreAuthorize("@authz.permission(#root, 'delete:user')")
-	public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") String userId) {
+	public ResponseEntity<ApiResponse> deleteUser(@PathVariable String userId) {
 		ApiResponse response = userService.deleteUser(userId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/self-delete")
-	@PreAuthorize("!hasRole('ADMIN')")
 	public ResponseEntity<ApiResponse> selfDeleteUser(@CurrentUser UserPrincipal userPrincipal) {
 		ApiResponse response = userService.selfDelete(userPrincipal);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@GetMapping("/username-exist")
-	public ResponseEntity<Boolean> checkUsernameUnique(@RequestParam("username") String username) {
+	public ResponseEntity<Boolean> checkUsernameUnique(@RequestParam String username) {
 		Boolean unique = userService.isUsernameExists(username);
 		return new ResponseEntity<>(unique, HttpStatus.OK);
 	}
 
 	@GetMapping("/email-exist")
-	public ResponseEntity<Boolean> checkEmailUnique(@RequestParam("email") String email) {
+	public ResponseEntity<Boolean> checkEmailUnique(@RequestParam String email) {
 
 		Boolean unique = userService.isEmailExists(email);
 		return new ResponseEntity<>(unique, HttpStatus.OK);

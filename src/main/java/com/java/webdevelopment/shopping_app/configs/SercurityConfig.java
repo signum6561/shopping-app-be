@@ -21,6 +21,14 @@ public class SercurityConfig {
 
     @Autowired
 	private JWTAuthEntryPoint unauthorizedHandler;
+
+    public String[] PUBLIC_ROUTES = {
+        "/api/v1/auth/**", 
+        "/v3/api-docs/**", 
+        "/swagger-ui/**",
+        "/api/v1/user/email-exist",
+        "/api/v1/user/username-exist",
+    };
 	
 	@Bean
 	JWTAuthFilter JWTAuthFilter() {
@@ -38,12 +46,7 @@ public class SercurityConfig {
                         .authenticationEntryPoint(unauthorizedHandler))
                 .addFilterBefore(JWTAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                            .requestMatchers(
-                                "/api/v1/auth/**", 
-                                "/v3/api-docs/**", 
-                                "/swagger-ui/**",
-                                "/api/v1/user/email-exist",
-                                "/api/v1/user/username-exist")
+                            .requestMatchers(PUBLIC_ROUTES)
                             .permitAll()
                             .anyRequest()
                             .authenticated());

@@ -8,5 +8,5 @@ import com.java.webdevelopment.shopping_app.entities.OrderItemKey;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemKey> {
-
+    
 }

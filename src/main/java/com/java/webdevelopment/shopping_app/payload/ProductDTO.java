@@ -1,10 +1,8 @@
 package com.java.webdevelopment.shopping_app.payload;
 
-import java.util.List;
+import java.util.Set;
 
-import com.java.webdevelopment.shopping_app.entities.ProductImage;
-
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +15,7 @@ public class ProductDTO {
     
     private String id;
 
-    @NotEmpty
+    @NotBlank
     private String name;
 
     @NotNull
@@ -26,11 +24,13 @@ public class ProductDTO {
     @NotNull
     private Integer amount;
 
-    @NotNull
-    private CategoryDTO category;
-    
-    @NotNull
+    @NotBlank
     private String description;
     
-    private List<ProductImage> images;
+    @NotBlank
+    private String categoryId;
+
+    private String categoryName;
+    
+    private Set<String> imageLinks;
 }

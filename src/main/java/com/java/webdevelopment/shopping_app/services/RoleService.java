@@ -4,12 +4,13 @@ import com.java.webdevelopment.shopping_app.payload.RoleDTO;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.DataResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
+import com.java.webdevelopment.shopping_app.payload.responses.RoleInfoResponse;
 
 public interface RoleService {
     
-    PageResponse<RoleDTO> getPaginateRole(Integer page, Integer pageSize);
+    PageResponse<RoleInfoResponse> getPaginateRole(Integer page, Integer pageSize);
 
-    DataResponse<RoleDTO> getAllRole();
+    DataResponse<RoleInfoResponse> getAllRole();
 
     RoleDTO getRole(String id);
 

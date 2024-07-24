@@ -9,5 +9,8 @@ import com.java.webdevelopment.shopping_app.entities.Permission;
 
 @Repository
 public interface PermissionRepository extends JpaRepository<Permission, String> {
+    
     Optional<Permission> findByCode(String code);
+
+    boolean existsByCode(String code);
 }

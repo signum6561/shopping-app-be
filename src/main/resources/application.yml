@@ -24,5 +24,9 @@ spring:
   flyway:
     cleanDisabled: false
 app:
-  jwtSecret: '"supersecurityandsupersupersecurity"'
+  jwtSecret: 'ddbfaf5a6b5e44f29c015a1cf7def1ac659d6c948da9ab409167db0bcd06031b'
   jwtExpiration: '3600000'
+  sys-admin:
+    username: 'admin'
+    email: 'quiocdat777@gmail.com'
+    password: '123456'

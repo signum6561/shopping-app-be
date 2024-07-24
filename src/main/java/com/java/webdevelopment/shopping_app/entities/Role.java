@@ -3,6 +3,7 @@ package com.java.webdevelopment.shopping_app.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.java.webdevelopment.shopping_app.enums.BaseRole;
 import com.java.webdevelopment.shopping_app.utils.Extensions;
 
 import jakarta.persistence.CascadeType;
@@ -85,11 +86,15 @@ public class Role {
 	}
 
 	public boolean isBaseRole() {
-		return code.equals("ADMIN") || code.equals("USER");
+		return BaseRole.existByName(name);
 	}
 
 	public void addPermission(Permission permission) {
 		permissions.add(permission);
+	}
+	
+	public void clearPermissions() {
+		permissions.clear();
 	}
 
 	@Override
