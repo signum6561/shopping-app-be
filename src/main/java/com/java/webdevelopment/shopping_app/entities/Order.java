@@ -62,6 +62,14 @@ public class Order {
 			.sum();
     }
 
+	public void addItem(OrderItem item) {
+		items.add(item);
+	}
+
+	public void clearItems() {
+		items.clear();
+	}
+
 	@Override
 	public String toString() {
 		return "Order [id=" + id +

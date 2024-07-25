@@ -1,27 +1,29 @@
 package com.java.webdevelopment.shopping_app.services;
 
-import com.java.webdevelopment.shopping_app.payload.UserDTO;
+import com.java.webdevelopment.shopping_app.payload.requests.UserInfoRequest;
 import com.java.webdevelopment.shopping_app.payload.requests.UserRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
-import com.java.webdevelopment.shopping_app.payload.responses.UserProfileResponse;
+import com.java.webdevelopment.shopping_app.payload.responses.UserResponse;
 import com.java.webdevelopment.shopping_app.sercurity.UserPrincipal;
 
 public interface UserService {
 
-    PageResponse<UserProfileResponse> getPaginateUser(Integer page, Integer pageSize);
+    PageResponse<UserResponse> getPaginateUser(Integer page, Integer pageSize);
+
+    PageResponse<UserResponse> getUserByRoleCode(String code, Integer page, Integer pageSize);
     
-    UserProfileResponse getCurrentUser(UserPrincipal userPrincipal);
+    UserResponse getCurrentUser(UserPrincipal userPrincipal);
 
-    UserProfileResponse getUser(String id);
-    
-    UserProfileResponse createUser(UserDTO userDTO);
+    UserResponse getUser(String id);
+     
+    UserResponse createUser(UserInfoRequest request);
 
-    UserProfileResponse createUser(UserRequest request);
+    UserResponse createUser(UserRequest request);
 
-    UserProfileResponse updateUser(String id, UserDTO newUser);
+    UserResponse updateUser(String id, UserRequest newUser);
 
-    UserProfileResponse updateProfile(UserPrincipal userPrincipal, UserDTO newUser);
+    UserResponse updateProfile(UserPrincipal userPrincipal, UserInfoRequest newUser);
 
     ApiResponse deleteUser(String id);
 

@@ -36,7 +36,7 @@ create table
         category_id varchar(255) not null,
         price bigint not null,
         amount integer not null,
-        description varchar(255) not null,
+        description TEXT not null,
         primary key (id)
     ) engine = InnoDB;
 

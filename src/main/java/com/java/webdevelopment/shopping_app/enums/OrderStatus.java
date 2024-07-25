@@ -14,4 +14,25 @@ public enum OrderStatus {
     private OrderStatus(String code) {
         this.code = code;
     }
+
+    public static boolean existByCode(String code) {
+        for (OrderStatus status : OrderStatus.values()) {
+            if(status.getCode().equals(code)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static OrderStatus convert(String code) {
+        switch (code) {
+            case "C":
+                return OrderStatus.Canceled;
+            case "O":
+                return OrderStatus.OnHold;
+            case "S":
+                return OrderStatus.Success;
+        }
+        return null;
+    }
 }

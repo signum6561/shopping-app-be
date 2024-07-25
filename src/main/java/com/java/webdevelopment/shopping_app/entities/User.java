@@ -68,22 +68,7 @@ public class User {
     }
 
     public void addRole(Role role) {
-        if(roles == null) {
-            roles = new HashSet<>();
-        }
         roles.add(role);
-    }
-
-    public Role removeRole(Role role) {
-        return removeRole(role.getId());
-    }
-
-    public Role removeRole(String id) {
-        return roles.stream()
-            .filter(r -> r.getId().equals(id))
-            .peek(role -> roles.remove(role))
-            .findFirst()
-            .orElse(null);
     }
 
     public boolean isAdmin() {
@@ -93,6 +78,17 @@ public class User {
 
     public boolean hasRoles() {
         return !roles.isNullOrEmpty();
+    }
+
+    public void clearRoles() {
+		roles.clear();
+	}
+
+    public Order getOrder(String id) {
+        return orders.stream()
+            .filter(o -> o.getId().equals(id))
+            .findFirst()
+            .orElse(null);
     }
 
     @Override

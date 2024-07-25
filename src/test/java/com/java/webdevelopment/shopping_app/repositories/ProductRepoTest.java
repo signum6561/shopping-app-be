@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.github.javafaker.Faker;
 import com.java.webdevelopment.shopping_app.entities.Category;
 import com.java.webdevelopment.shopping_app.entities.Product;
+import com.java.webdevelopment.shopping_app.entities.ProductImage;
 import com.java.webdevelopment.shopping_app.utils.IdUtil;
 
 @SpringBootTest
@@ -38,6 +39,14 @@ public class ProductRepoTest {
                 .description(faker.lorem().paragraph())
                 .category(faker.options().nextElement(listCategories))
                 .build();
+            for (int i = 0; i < 3; i++) {
+                ProductImage productImage = ProductImage.builder()
+                        .id(IdUtil.generate())
+                        .link(faker.avatar().image())
+                        .product(product)
+                        .build();
+                product.addImage(productImage);
+            }
             productRepository.save(product);
         }
     }

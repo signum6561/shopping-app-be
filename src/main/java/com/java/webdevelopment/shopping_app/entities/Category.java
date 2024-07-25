@@ -3,6 +3,8 @@ package com.java.webdevelopment.shopping_app.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.java.webdevelopment.shopping_app.utils.Extensions;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -12,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.ExtensionMethod;
 
 @Entity
 @Table(name = "category")
@@ -19,6 +22,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Builder
 @EqualsAndHashCode(of = "id")
+@ExtensionMethod(Extensions.class)
 public class Category {
 
     @Id
@@ -40,6 +44,10 @@ public class Category {
 
     public void addProduct(Product product) {
         products.add(product);
+    }
+
+    public boolean hasProducts() {
+        return !products.isNullOrEmpty();
     }
 
     @Override

@@ -12,5 +12,7 @@ public class ProductInfoResponse {
     private String name;
     private Long price;
     private Integer amount;
+    private boolean inStock;
     private String categoryName;
+    private String defaultImage;
 }

@@ -9,10 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.github.javafaker.Faker;
 import com.java.webdevelopment.shopping_app.entities.User;
-import com.java.webdevelopment.shopping_app.payload.UserDTO;
+import com.java.webdevelopment.shopping_app.payload.requests.UserInfoRequest;
+import com.java.webdevelopment.shopping_app.payload.requests.UserRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
-import com.java.webdevelopment.shopping_app.payload.responses.UserProfileResponse;
+import com.java.webdevelopment.shopping_app.payload.responses.UserResponse;
 import com.java.webdevelopment.shopping_app.sercurity.UserPrincipal;
 
 @SpringBootTest
@@ -29,57 +30,73 @@ public class UserServiceTest {
     void prepare() {
         faker = new Faker();
         User user = User.builder()
-            .id("MlSpZnV0nhyfrW-_OWj5w")
+            .id("HzLKVwWPsrLAYRWlL5YGw")
             .email("example777@gmail.com")
-            .username("cuong69")
+            .username("admin")
             .build();
         userPrincipal = new UserPrincipal(user);
     }
 
     @Test
     void testCreateUser() {
-        UserDTO request = new UserDTO();
+        UserInfoRequest request = new UserInfoRequest();
         request.setEmail("exmaple777@gmail.com");
         request.setUsername("cuong69");
         request.setPassword(faker.internet().password());
-        UserProfileResponse res = userService.createUser(request);
+        UserResponse res = userService.createUser(request);
         System.out.println(res);
     }
 
     @Test
     void testGetPaginateUser() {
-        PageResponse<UserProfileResponse> users = userService.getPaginateUser(0, 5);
+        PageResponse<UserResponse> users = userService.getPaginateUser(0, 5);
         System.out.println(users);
     }
 
     @Test
     void testGetUser() {
-        String id = "MlSpZnV0nhyfrW-_OWj5w";
-        UserProfileResponse res = userService.getUser(id);
+        String id = "VCp9vhJq3hHm0GIqazH-e";
+        UserResponse res = userService.getUser(id);
         System.out.println(res); 
     }
 
     @Test
-    void testUpdateUserByUsername() {
-        String id = "MlSpZnV0nhyfrW-_OWj5w";
-        UserDTO userDto = new UserDTO();
-        userDto.setEmail("thoai29");
-        userDto.setPassword("exagfd7@gmail.com");
-        userDto.setUsername("thoai29");
-        UserProfileResponse res = userService.updateUser(id, userDto);
+    void testUpdateUser() {
+        String id = "VCp9vhJq3hHm0GIqazH-e";
+        UserRequest request = new UserRequest();
+        request.setEmail("dasaf@gmail.com");
+        request.setPassword("cuont235");
+        request.setUsername("thoai20");
+        UserResponse res = userService.updateUser(id, request);
         System.out.println(res);
     }
 
     @Test
-    void testDeleteUserByUsername() {
-        String id = "MlSpZnV0nhyfrW-_OWj5w";
+    void testUpdateUserProfile() {
+        UserInfoRequest request = new UserInfoRequest();
+        request.setEmail("dasaf@gmail.com");
+        request.setPassword("cuont235");
+        request.setUsername("thoai29");
+        UserResponse res = userService.updateProfile(userPrincipal, request);
+        System.out.println(res);
+    }
+
+    @Test
+    void testDeleteUser() {
+        String id = "VCp9vhJq3hHm0GIqazH-e";
         ApiResponse res = userService.deleteUser(id);
         System.out.println(res);
     }
 
     @Test
+    void testSelfDelete() {
+        ApiResponse res = userService.selfDelete(userPrincipal);
+        System.out.println(res);
+    }
+
+    @Test
     void testGetCurrentUser() {
-        UserProfileResponse res = userService.getCurrentUser(userPrincipal);
+        UserResponse res = userService.getCurrentUser(userPrincipal);
         System.out.println(res);
     }
 

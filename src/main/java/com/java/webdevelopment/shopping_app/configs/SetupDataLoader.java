@@ -1,18 +1,18 @@
 package com.java.webdevelopment.shopping_app.configs;
 
-import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.java.webdevelopment.shopping_app.constants.Contants;
 import com.java.webdevelopment.shopping_app.entities.Permission;
 import com.java.webdevelopment.shopping_app.entities.Role;
 import com.java.webdevelopment.shopping_app.entities.User;
+import com.java.webdevelopment.shopping_app.enums.BaseRole;
 import com.java.webdevelopment.shopping_app.enums.Resource;
 import com.java.webdevelopment.shopping_app.repositories.PermissionRepository;
 import com.java.webdevelopment.shopping_app.repositories.RoleRepository;
@@ -38,6 +38,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${app.sys-admin.username}")
+    public String sysAdminUsername;
+
+    @Value("${app.sys-admin.email}")
+    public  String sysAdminEmail;
+
+    @Value("${app.sys-admin.password}")
+    public String sysAdminPassword;
+
     @Override
     @Transactional
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
@@ -46,25 +55,24 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             return;
         }
 
-        Role adminRole = createRoleIfNotFound("ADMIN", "System Admin");
-        Role userRole = createRoleIfNotFound("USER", "User");
+        Role adminRole = createRoleIfNotFound(BaseRole.ADMIN.toString(), "System Admin");
+        Role userRole = createRoleIfNotFound(BaseRole.USER.toString(), "User");
 
         for (Resource resource : Resource.values()) {
-            String resourceName = resource.toString();
-            createPermissionIfNotFound("CREATE_" + resourceName);
-            createPermissionIfNotFound("READ_" + resourceName);
-            createPermissionIfNotFound("UPDATE_" + resourceName);
-            createPermissionIfNotFound("DELETE_" + resourceName);
+            String resourceCode = Resource.convertToCode(resource);
+            for (String permission : resource.getPermissions()) {
+                createPermissionIfNotFound(permission + resourceCode); 
+            }
         }
 
-        userRole.setPermissions(new HashSet<>());
-        for (String permssionCode : Contants.BASE_USER_PERMISSIONS) {
+        for (String permssionCode : BaseRole.USER.getPermissions()) {
             Permission permission = createPermissionIfNotFound(permssionCode);
             userRole.addPermission(permission);
         }
+
         roleRepository.save(userRole);
 
-        if(userRepository.existsByUsername("admin")) {
+        if(userRepository.existsByUsername(sysAdminUsername)) {
             isAlreadySetup = true;
             return;
         }
@@ -72,8 +80,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         User adminUser = User.builder()
             .id(IdUtil.generate())
             .username("admin")
-            .password(passwordEncoder.encode("missipi6561"))
-            .email("quiocdat777@gmail.com")
+            .password(passwordEncoder.encode(sysAdminPassword))
+            .email(sysAdminEmail)
             .build();
         adminUser.addRole(adminRole);
         userRepository.save(adminUser);

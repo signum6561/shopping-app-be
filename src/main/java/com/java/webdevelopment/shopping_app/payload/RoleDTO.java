@@ -1,20 +1,31 @@
 package com.java.webdevelopment.shopping_app.payload;
 
-import jakarta.validation.constraints.NotEmpty;
+import java.util.HashSet;
+import java.util.Set;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class RoleDTO {
 
     private String id;
 
-    @NotEmpty
+    @NotBlank
     private String name;
     
-    @NotEmpty
+    @NotBlank
     private String code;
+
+    @Size(min = 1)
+    @NotNull
+    private Set<String> permissionCodes;
+
+    public RoleDTO() {
+        permissionCodes = new HashSet<>();
+    }
 }

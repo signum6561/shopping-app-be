@@ -36,6 +36,10 @@ public class OrderItem {
     @NotNull
 	private Integer quantity;
 
+    public OrderItem() {
+        id = new OrderItemKey();
+    }
+
     public Long getTotal() {
         return product.getPrice() * Long.valueOf(quantity);
     }

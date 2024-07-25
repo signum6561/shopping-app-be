@@ -15,7 +15,7 @@ public interface CategoryService {
 
     CategoryDTO createCategory(CategoryDTO categoryDTO);
 
-    CategoryDTO updateCategory(CategoryDTO categoryDTO);
+    CategoryDTO updateCategory(String id, CategoryDTO categoryDTO);
 
     ApiResponse deleteCategory(String id);
 

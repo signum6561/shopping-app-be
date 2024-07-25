@@ -1,6 +1,6 @@
 package com.java.webdevelopment.shopping_app.payload;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +12,6 @@ public class CategoryDTO {
 
     private String id;
 
-    @NotEmpty
+    @NotBlank
     private String name;
 }
