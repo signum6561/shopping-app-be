@@ -16,8 +16,9 @@ public enum OrderStatus {
     }
 
     public static boolean existByCode(String code) {
+        String c = code.toUpperCase();
         for (OrderStatus status : OrderStatus.values()) {
-            if(status.getCode().equals(code)) {
+            if(status.getCode().equals(c)) {
                 return true;
             }
         }
@@ -25,12 +26,12 @@ public enum OrderStatus {
     }
 
     public static OrderStatus convert(String code) {
-        switch (code) {
-            case "C":
+        switch (code.toLowerCase()) {
+            case "c":
                 return OrderStatus.Canceled;
-            case "O":
+            case "o":
                 return OrderStatus.OnHold;
-            case "S":
+            case "s":
                 return OrderStatus.Success;
         }
         return null;
