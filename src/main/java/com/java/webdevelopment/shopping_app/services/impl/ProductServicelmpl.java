@@ -6,26 +6,30 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
 import com.java.webdevelopment.shopping_app.conventers.DefaultImageConvert;
 import com.java.webdevelopment.shopping_app.conventers.ProductImageConveter;
 import com.java.webdevelopment.shopping_app.entities.Category;
 import com.java.webdevelopment.shopping_app.entities.Product;
-import com.java.webdevelopment.shopping_app.entities.ProductImage;
 import com.java.webdevelopment.shopping_app.exceptions.CategoryNotFoundException;
 import com.java.webdevelopment.shopping_app.exceptions.ProductNotFoundException;
-import com.java.webdevelopment.shopping_app.payload.ProductDTO;
+import com.java.webdevelopment.shopping_app.payload.requests.ProductRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.ProductInfoResponse;
+import com.java.webdevelopment.shopping_app.payload.responses.ProductResponse;
 import com.java.webdevelopment.shopping_app.repositories.CategoryRepository;
 import com.java.webdevelopment.shopping_app.repositories.ProductRepository;
 import com.java.webdevelopment.shopping_app.services.ProductService;
 import com.java.webdevelopment.shopping_app.utils.IdUtil;
 import com.java.webdevelopment.shopping_app.utils.PageUtil;
+
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class ProductServicelmpl implements ProductService {
@@ -41,7 +45,10 @@ public class ProductServicelmpl implements ProductService {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.categoryRepository = categoryRepository;
+    }
 
+    @PostConstruct
+    public void postConstruct() {
         TypeMap<Product, ProductInfoResponse> entityToInfoResponse = modelMapper.createTypeMap(Product.class,
                 ProductInfoResponse.class);
 
@@ -59,12 +66,22 @@ public class ProductServicelmpl implements ProductService {
         entityToInfoResponse.addMappings(
                 mapper -> mapper.map(Product::isInStock, ProductInfoResponse::setInStock));
 
-        TypeMap<Product, ProductDTO> entityToDto = modelMapper.createTypeMap(Product.class, ProductDTO.class);
-        entityToDto.addMappings(
-                mapper -> mapper.using(new ProductImageConveter()).map(Product::getImages, ProductDTO::setImageLinks));
+        TypeMap<Product, ProductResponse> entityToResponse = modelMapper.createTypeMap(Product.class,
+                ProductResponse.class);
+        entityToResponse.addMappings(
+                mapper -> mapper.using(new ProductImageConveter()).map(Product::getImages,
+                        ProductResponse::setImageLinks));
+
+        entityToResponse.addMappings(
+                mapper -> mapper.map(Product::isInStock, ProductResponse::setInStock));
+
+        entityToResponse.addMappings(
+                mapper -> mapper.using(categoryNameOnlyConverter).map(Product::getCategory,
+                        ProductResponse::setCategoryName));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageResponse<ProductInfoResponse> getPaginateProduct(Integer page, Integer pageSize) {
 
         Page<Product> products = productRepository.findAll(PageUtil.request(page, pageSize));
@@ -83,62 +100,80 @@ public class ProductServicelmpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProduct(String id) {
+    @Transactional(readOnly = true)
+    public PageResponse<ProductInfoResponse> getProductsByCategory(String categoryId, Integer page, Integer pageSize) {
+        
+        boolean isCategoryExist = categoryRepository.existsById(categoryId);
+        if(!isCategoryExist) {
+            throw new CategoryNotFoundException(categoryId);
+        }
+        
+        Pageable pageable = PageUtil.request(page, pageSize);
+        Page<Product> products = productRepository.findByCategoryId(categoryId, pageable);
+        List<ProductInfoResponse> productResponse = products.get()
+                .map(product -> modelMapper.map(product, ProductInfoResponse.class))
+                .toList();
 
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-        return modelMapper.map(product, ProductDTO.class);
+        PageResponse<ProductInfoResponse> pageResponse = new PageResponse<>();
+        pageResponse.setCurrentPage(page);
+        pageResponse.setLastPage(products.getTotalPages());
+        pageResponse.setPageSize(pageSize);
+        pageResponse.setTotal(products.getNumberOfElements());
+        pageResponse.setData(productResponse);
+        return pageResponse;
     }
 
     @Override
-    public ProductDTO createProduct(ProductDTO productDTO) {
-        String id = productDTO.getCategoryId();
+    public ProductResponse getProduct(String id) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        return modelMapper.map(product, ProductResponse.class);
+    }
+
+    @Override
+    @Transactional
+    public ProductResponse createProduct(ProductRequest request) {
+        String id = request.getCategoryId();
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(id));
 
         Product product = Product.builder()
                 .id(IdUtil.generate())
-                .name(productDTO.getName())
-                .amount(productDTO.getAmount())
+                .name(request.getName())
+                .amount(request.getAmount())
                 .category(category)
-                .description(productDTO.getDescription())
-                .price(productDTO.getPrice())
+                .description(request.getDescription())
+                .price(request.getPrice())
                 .build();
 
-        for (String link : productDTO.getImageLinks()) {
-            ProductImage productImage = ProductImage.builder()
-                    .id(IdUtil.generate())
-                    .link(link)
-                    .build();
-            product.addImage(productImage);
-        }
-
         Product insertedProduct = productRepository.save(product);
-        return modelMapper.map(insertedProduct, ProductDTO.class);
+        return modelMapper.map(insertedProduct, ProductResponse.class);
     }
 
     @Override
-    public ProductDTO updateProduct(ProductDTO productDTO) {
+    @Transactional
+    public ProductResponse updateProduct(String id, ProductRequest request) {
 
-        String id = productDTO.getId();
-        String categoryId = productDTO.getCategoryId();
+        String categoryId = request.getCategoryId();
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
-        product.setName(productDTO.getName());
-        product.setPrice(productDTO.getPrice());
-        product.setAmount(productDTO.getAmount());
-        product.setDescription(productDTO.getDescription());
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product.setAmount(request.getAmount());
+        product.setDescription(request.getDescription());
         product.setCategory(category);
 
         productRepository.save(product);
-        return modelMapper.map(product, ProductDTO.class);
+        return modelMapper.map(product, ProductResponse.class);
     }
 
     @Override
+    @Transactional
     public ApiResponse deleteProduct(String id) {
 
         Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));

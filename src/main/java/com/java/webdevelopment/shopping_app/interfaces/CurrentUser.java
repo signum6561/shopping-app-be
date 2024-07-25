@@ -1,4 +1,4 @@
-package com.java.webdevelopment.shopping_app.sercurity;
+package com.java.webdevelopment.shopping_app.interfaces;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

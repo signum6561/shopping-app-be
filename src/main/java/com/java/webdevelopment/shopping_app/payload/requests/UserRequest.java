@@ -19,11 +19,13 @@ public class UserRequest {
     private String username;
 
     @Email(message = Contants.INVALID_EMAIL_FORMAT)
+    @NotBlank
     private String email;
 
     @Size(
         min = Contants.MIN_PASSWORD_LENGTH, 
         message = Contants.INVALID_PASSWORD_LENGTH)
+    @NotBlank
     private String password;
 
     private Set<String> roleCodes;

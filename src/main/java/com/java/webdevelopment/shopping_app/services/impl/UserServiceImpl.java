@@ -3,6 +3,7 @@ package com.java.webdevelopment.shopping_app.services.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -87,7 +88,7 @@ public class UserServiceImpl implements UserService {
 	}
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public PageResponse<UserResponse> getPaginateUser(Integer page, Integer pageSize) {
 
         Page<User> users = userRepository.findAll(PageUtil.request(page, pageSize));
@@ -102,6 +103,30 @@ public class UserServiceImpl implements UserService {
         pageResponse.setTotal(users.getNumberOfElements());
         pageResponse.setData(userResponse);
         return pageResponse; 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<UserResponse> getUserByRoleCode(String code, Integer page, Integer pageSize) {
+
+        boolean isRoleCodeExist = roleRepository.existsByCode(code);
+        if(!isRoleCodeExist) {
+            throw new RoleNotFoundException(code);
+        }
+
+        Pageable pageable = PageUtil.request(page, pageSize);
+        Page<User> users = userRepository.findByRolesCode(code, pageable);
+        List<UserResponse> userResponse = users.get()
+            .map(user -> modelMapper.map(user, UserResponse.class))
+            .toList();
+
+        PageResponse<UserResponse> pageResponse = new PageResponse<>();
+        pageResponse.setCurrentPage(page);
+        pageResponse.setLastPage(users.getTotalPages());
+        pageResponse.setPageSize(pageSize);
+        pageResponse.setTotal(users.getNumberOfElements());
+        pageResponse.setData(userResponse);
+        return pageResponse;
     }
 
     @Override
@@ -140,11 +165,6 @@ public class UserServiceImpl implements UserService {
                 user.addRole(role);
             }
         }
-
-        String basicRole = BaseRole.USER.toString();
-        Role role = roleRepository.findByCode(basicRole)
-                .orElseThrow(() -> new RoleNotFoundException(basicRole));
-        user.addRole(role);
 
         User insertedUser = userRepository.save(user);
         return modelMapper.map(insertedUser, UserResponse.class);
@@ -190,11 +210,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(id));
             
-        if(username != user.getUsername() && isUsernameExists(username)) {
+        if(!user.getUsername().equals(username) && isUsernameExists(username)) {
             throw new UsernameAlreadyExistException(username);
         }
 
-        if(email != user.getEmail() && isEmailExists(email)) {
+        if(!user.getEmail().equals(email) && isEmailExists(email)) {
             throw new EmailAlreadyExistException(email);
         }
 
@@ -228,11 +248,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(id));
 
-        if(username != user.getUsername() && isUsernameExists(username)) {
+        if(!user.getUsername().equals(username) && isUsernameExists(username)) {
             throw new UsernameAlreadyExistException(username);
         }
 
-        if(email != user.getEmail() && isEmailExists(email)) {
+        if(!user.getEmail().equals(email) && isEmailExists(email)) {
             throw new EmailAlreadyExistException(email);
         }
 
@@ -250,8 +270,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException());
 
-        boolean isUserAdmin = user.getUsername().equals(SYS_ADMIN_USERNAME);
-        if (isUserAdmin) {
+        boolean isUserSysAdmin = user.getUsername().equals(SYS_ADMIN_USERNAME);
+        if (isUserSysAdmin) {
             throw new SystemAdminDeleteException();
         }
         userRepository.delete(user);
@@ -269,8 +289,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException());
 
-        boolean isUserAdmin = user.getUsername().equals(SYS_ADMIN_USERNAME);
-        if (isUserAdmin) {
+        boolean isUserSysAdmin = user.getUsername().equals(SYS_ADMIN_USERNAME);
+        if (isUserSysAdmin) {
             throw new SystemAdminDeleteException();
         }
 
@@ -283,11 +303,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isUsernameExists(String username) {
         return userRepository.existsByUsername(username);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isEmailExists(String email) {
         return userRepository.existsByEmail(email);
     }

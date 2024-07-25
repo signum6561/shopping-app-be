@@ -10,11 +10,13 @@ import com.java.webdevelopment.shopping_app.sercurity.UserPrincipal;
 public interface UserService {
 
     PageResponse<UserResponse> getPaginateUser(Integer page, Integer pageSize);
+
+    PageResponse<UserResponse> getUserByRoleCode(String code, Integer page, Integer pageSize);
     
     UserResponse getCurrentUser(UserPrincipal userPrincipal);
 
     UserResponse getUser(String id);
-    
+     
     UserResponse createUser(UserInfoRequest request);
 
     UserResponse createUser(UserRequest request);

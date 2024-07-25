@@ -38,6 +38,7 @@ public class Contants {
     public static final String DENIED_BASE_ROLE_MODIFY = "You cannot modify base roles";
     public static final int COMPACT_ID_LENGTH = 10;
     public static final int DEFAULT_ID_LENGTH = 21;
+    public static final String CATEGORY_REF_PRODUCT = "There are products reference to this category";
 
     public static String DEFAULT_NOT_FOUND(String resourceName) {
         return PARAMETERIZED_DEFAULT_NOT_FOUND.replaceAll("@resource", resourceName);

@@ -1,7 +1,7 @@
-package com.java.webdevelopment.shopping_app.payload;
+package com.java.webdevelopment.shopping_app.payload.requests;
 
-import java.util.Set;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,16 +11,16 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
-    
-    private String id;
+public class ProductRequest {
 
     @NotBlank
     private String name;
 
+    @Min(1)
     @NotNull
     private Long price;
 
+    @Min(1)
     @NotNull
     private Integer amount;
 
@@ -30,7 +30,4 @@ public class ProductDTO {
     @NotBlank
     private String categoryId;
 
-    private String categoryName;
-    
-    private Set<String> imageLinks;
 }

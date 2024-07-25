@@ -1,23 +1,31 @@
 package com.java.webdevelopment.shopping_app.services;
 
-import com.java.webdevelopment.shopping_app.payload.OrderDTO;
+import com.java.webdevelopment.shopping_app.payload.requests.OrderRequest;
+import com.java.webdevelopment.shopping_app.payload.requests.UserOrderRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
+import com.java.webdevelopment.shopping_app.payload.responses.OrderResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
 import com.java.webdevelopment.shopping_app.sercurity.UserPrincipal;
 
 public interface OrderService {
 
-    PageResponse<OrderDTO> getPaginateOrder(Integer page, Integer pageSize);
+    PageResponse<OrderResponse> getPaginateOrder(Integer page, Integer pageSize);
 
-    PageResponse<OrderDTO> getCurrentUserOrders(UserPrincipal userPrincipal, Integer page, Integer pageSize);
+    PageResponse<OrderResponse> getCurrentUserOrders(UserPrincipal userPrincipal, Integer page, Integer pageSize);
     
-    PageResponse<OrderDTO> getOrdersByUser(String userId, Integer page, Integer pageSize);
+    PageResponse<OrderResponse> getOrdersByUser(String userId, Integer page, Integer pageSize);
 
-    OrderDTO getOrder(String id);
+    OrderResponse getCurrentUserOrder(String id, UserPrincipal userPrincipal);
 
-    OrderDTO createOrder(OrderDTO orderDTO);
+    ApiResponse deleteCurrentUserOrder(String id, UserPrincipal userPrincipal);
 
-    OrderDTO updateOrder(String id, OrderDTO orderDTO);
+    OrderResponse getOrder(String id);
+
+    OrderResponse createOrder(OrderRequest request);
+
+    OrderResponse createCurrentUserOrder(UserOrderRequest request, UserPrincipal userPrincipal);
+
+    OrderResponse updateOrder(String id, OrderRequest request);
 
     ApiResponse deleteOrder(String id);
 }

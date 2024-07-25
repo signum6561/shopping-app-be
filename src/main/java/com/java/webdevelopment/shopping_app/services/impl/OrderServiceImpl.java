@@ -10,8 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
+import com.java.webdevelopment.shopping_app.conventers.ItemListConventer;
 import com.java.webdevelopment.shopping_app.entities.Order;
 import com.java.webdevelopment.shopping_app.entities.OrderItem;
 import com.java.webdevelopment.shopping_app.entities.Product;
@@ -21,9 +23,11 @@ import com.java.webdevelopment.shopping_app.exceptions.IllegalOrderStatusExcepti
 import com.java.webdevelopment.shopping_app.exceptions.OrderNotFoundException;
 import com.java.webdevelopment.shopping_app.exceptions.ProductNotFoundException;
 import com.java.webdevelopment.shopping_app.exceptions.UserNotFoundException;
-import com.java.webdevelopment.shopping_app.payload.OrderDTO;
-import com.java.webdevelopment.shopping_app.payload.OrderItemDTO;
+import com.java.webdevelopment.shopping_app.payload.requests.ItemRequest;
+import com.java.webdevelopment.shopping_app.payload.requests.OrderRequest;
+import com.java.webdevelopment.shopping_app.payload.requests.UserOrderRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
+import com.java.webdevelopment.shopping_app.payload.responses.OrderResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
 import com.java.webdevelopment.shopping_app.repositories.OrderRepository;
 import com.java.webdevelopment.shopping_app.repositories.ProductRepository;
@@ -56,45 +60,53 @@ public class OrderServiceImpl implements OrderService {
 
     @PostConstruct
     private void postConstruct() {
-        TypeMap<Order, OrderDTO> entityToDto = modelMapper.createTypeMap(Order.class, OrderDTO.class);
-        Converter<OrderStatus, String> orderStatusString = s -> s.getSource().getCode();
+        TypeMap<Order, OrderResponse> entityToDto = modelMapper.createTypeMap(Order.class, OrderResponse.class);
+        Converter<OrderStatus, String> orderStatusString = s -> s.getSource().toString();
         entityToDto.addMappings(
-                mapper -> mapper.using(orderStatusString).map(Order::getStatus, OrderDTO::setStatus));
+                mapper -> mapper.using(orderStatusString).map(Order::getStatus, OrderResponse::setStatus));
+
+        entityToDto.addMappings(
+                mapper -> mapper.using(new ItemListConventer()).map(Order::getItems, OrderResponse::setItems));
     }
 
     @Override
-    public PageResponse<OrderDTO> getPaginateOrder(Integer page, Integer pageSize) {
+    @Transactional(readOnly = true)
+    public PageResponse<OrderResponse> getPaginateOrder(Integer page, Integer pageSize) {
         Page<Order> orders = orderRepository.findAll(PageUtil.request(page, pageSize));
-        List<OrderDTO> orderDTOs = orders.get()
-                .map(order -> modelMapper.map(order, OrderDTO.class))
+        List<OrderResponse> orderResponses = orders.get()
+                .map(order -> modelMapper.map(order, OrderResponse.class))
                 .toList();
 
-        PageResponse<OrderDTO> pageResponse = new PageResponse<>();
+        PageResponse<OrderResponse> pageResponse = new PageResponse<>();
         pageResponse.setCurrentPage(page);
         pageResponse.setLastPage(orders.getTotalPages());
         pageResponse.setPageSize(pageSize);
         pageResponse.setTotal(orders.getNumberOfElements());
-        pageResponse.setData(orderDTOs);
+        pageResponse.setData(orderResponses);
         return pageResponse;
     }
 
     @Override
-    public PageResponse<OrderDTO> getCurrentUserOrders(UserPrincipal userPrincipal, Integer page, Integer pageSize) {
+    public PageResponse<OrderResponse> getCurrentUserOrders(UserPrincipal userPrincipal, Integer page, Integer pageSize) {
         return getOrdersByUser(userPrincipal.getId(), page, pageSize);
     }
 
     @Override
-    public PageResponse<OrderDTO> getOrdersByUser(String userId, Integer page, Integer pageSize) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+    @Transactional(readOnly = true)
+    public PageResponse<OrderResponse> getOrdersByUser(String userId, Integer page, Integer pageSize) {
+
+        boolean isUserExist = userRepository.existsById(userId);
+        if(!isUserExist) {
+            throw new UserNotFoundException();
+        }
 
         Pageable pageable = PageUtil.request(page, pageSize);
-        Page<Order> orders = orderRepository.findAllByUser(user, pageable);
-        List<OrderDTO> orderDTOs = orders.get()
-                .map(order -> modelMapper.map(order, OrderDTO.class))
+        Page<Order> orders = orderRepository.findByUserId(userId, pageable);
+        List<OrderResponse> orderDTOs = orders.get()
+                .map(order -> modelMapper.map(order, OrderResponse.class))
                 .toList();
 
-        PageResponse<OrderDTO> pageResponse = new PageResponse<>();
+        PageResponse<OrderResponse> pageResponse = new PageResponse<>();
         pageResponse.setCurrentPage(page);
         pageResponse.setLastPage(orders.getTotalPages());
         pageResponse.setPageSize(pageSize);
@@ -104,17 +116,51 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO getOrder(String id) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException(id));
-
-        return modelMapper.map(order, OrderDTO.class);
+    @Transactional(readOnly = true)
+    public OrderResponse getCurrentUserOrder(String id, UserPrincipal userPrincipal) {
+        String userId = userPrincipal.getId();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException(userId));
+        
+        Order order = user.getOrder(id);
+        if(order == null) {
+            throw new OrderNotFoundException(); 
+        }
+        return modelMapper.map(order, OrderResponse.class);
     }
 
     @Override
-    public OrderDTO createOrder(OrderDTO orderDTO) {
-        String userId = orderDTO.getUserId();
-        String statusCode = orderDTO.getStatus();
+    @Transactional(readOnly = true)
+    public OrderResponse getOrder(String id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(id));
+        return modelMapper.map(order, OrderResponse.class);
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse deleteCurrentUserOrder(String id, UserPrincipal userPrincipal) {
+        String userId = userPrincipal.getId();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException(userId));
+        
+        Order order = user.getOrder(id);
+        if(order == null) {
+            throw new OrderNotFoundException(); 
+        }
+
+        orderRepository.delete(order);
+        return new ApiResponse(
+                true,
+                Contants.ORDER_DELETED_SUCCESS,
+                HttpStatus.OK);
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse createOrder(OrderRequest request) {
+        String userId = request.getUserId();
+        String statusCode = request.getStatus();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
@@ -132,28 +178,45 @@ public class OrderServiceImpl implements OrderService {
                 .date(status == OrderStatus.Success ? new Date() : new Date(0))
                 .build();
 
-        for (OrderItemDTO orderItemDTO : orderDTO.getItems()) {
-            String productId = orderItemDTO.getProductId();
+        for (ItemRequest itemRequest : request.getItems()) {
+            String productId = itemRequest.getProductId();
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new ProductNotFoundException(productId));
 
             OrderItem orderItem = OrderItem.builder()
                     .order(order)
                     .product(product)
-                    .quantity(orderItemDTO.getQuantity())
+                    .quantity(itemRequest.getQuantity())
                     .build();
 
             order.addItem(orderItem);
         }
 
         Order instertedOrder = orderRepository.save(order);
-        return modelMapper.map(instertedOrder, OrderDTO.class);
+        return modelMapper.map(instertedOrder, OrderResponse.class);
     }
 
     @Override
-    public OrderDTO updateOrder(String id, OrderDTO orderDTO) {
-        String userId = orderDTO.getUserId();
-        String statusCode = orderDTO.getStatus();
+    @Transactional
+    public OrderResponse createCurrentUserOrder(UserOrderRequest request, UserPrincipal userPrincipal) {
+        String userId = userPrincipal.getId();
+        boolean isUserExist = userRepository.existsById(userPrincipal.getId());
+        if(!isUserExist) {
+            throw new UserNotFoundException();
+        }
+        
+        OrderRequest orderRequest = new OrderRequest();
+        orderRequest.setItems(request.getItems());
+        orderRequest.setStatus(OrderStatus.OnHold.getCode());
+        orderRequest.setUserId(userId);
+        return createOrder(orderRequest);
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse updateOrder(String id, OrderRequest request) {
+        String userId = request.getUserId();
+        String statusCode = request.getStatus();
 
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(id));
@@ -170,25 +233,26 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(status);
         order.setDate(status == OrderStatus.Success ? new Date() : new Date(0));
         order.setUser(user);
-        for (OrderItemDTO orderItemDTO : orderDTO.getItems()) {
-            String productId = orderItemDTO.getProductId();
+        for (ItemRequest itemRequest : request.getItems()) {
+            String productId = itemRequest.getProductId();
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new ProductNotFoundException(productId));
 
             OrderItem orderItem = OrderItem.builder()
                     .order(order)
                     .product(product)
-                    .quantity(orderItemDTO.getQuantity())
+                    .quantity(itemRequest.getQuantity())
                     .build();
 
             order.addItem(orderItem);
         }
 
         Order updatedOrder = orderRepository.save(order);
-        return modelMapper.map(updatedOrder, OrderDTO.class);
+        return modelMapper.map(updatedOrder, OrderResponse.class);
     }
 
     @Override
+    @Transactional
     public ApiResponse deleteOrder(String id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(id));

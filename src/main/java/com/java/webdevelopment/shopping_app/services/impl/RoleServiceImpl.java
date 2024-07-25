@@ -6,6 +6,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
 import com.java.webdevelopment.shopping_app.conventers.PermissionCodeListConventer;
@@ -26,6 +28,9 @@ import com.java.webdevelopment.shopping_app.services.RoleService;
 import com.java.webdevelopment.shopping_app.utils.IdUtil;
 import com.java.webdevelopment.shopping_app.utils.PageUtil;
 
+import jakarta.annotation.PostConstruct;
+
+@Service
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
@@ -38,7 +43,10 @@ public class RoleServiceImpl implements RoleService {
         this.roleRepository = roleRepository;
         this.modelMapper = modelMapper;
         this.permissionRepository = permissionRepository;
+    }
 
+    @PostConstruct
+    public void postConstruct() {
         TypeMap<Role, RoleDTO> roleToRoleDto = modelMapper.createTypeMap(Role.class, RoleDTO.class);
         roleToRoleDto.addMappings(
                 mapper -> mapper.using(new PermissionCodeListConventer()).map(Role::getPermissions,
@@ -46,6 +54,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageResponse<RoleInfoResponse> getPaginateRole(Integer page, Integer pageSize) {
         Page<Role> roles = roleRepository.findAll(PageUtil.request(page, pageSize));
         List<RoleInfoResponse> roleInfos = roles.get()
@@ -62,6 +71,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DataResponse<RoleInfoResponse> getAllRole() {
         List<RoleInfoResponse> roleInfos = roleRepository.findAll()
             .stream()
@@ -72,6 +82,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RoleDTO getRole(String id) {
         Role role = roleRepository.findById(id)
             .orElseThrow(() -> new RoleNotFoundException(id));
@@ -79,6 +90,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional
     public RoleDTO createRole(RoleDTO roleDTO) {
         String code = roleDTO.getCode();
         Role role = Role.builder()
@@ -103,8 +115,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDTO updateRole(RoleDTO roleDTO) {
-        String id = roleDTO.getId();
+    @Transactional
+    public RoleDTO updateRole(String id, RoleDTO roleDTO) {
         Role role = roleRepository.findById(id)
             .orElseThrow(() -> new RoleNotFoundException(id));
 
@@ -126,6 +138,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional
     public ApiResponse deleteRole(String id) {
         Role role = roleRepository.findById(id)
             .orElseThrow(() -> new RoleNotFoundException(id));

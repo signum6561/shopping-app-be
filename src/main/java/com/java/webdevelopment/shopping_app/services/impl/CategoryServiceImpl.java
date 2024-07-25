@@ -6,10 +6,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
 import com.java.webdevelopment.shopping_app.entities.Category;
 import com.java.webdevelopment.shopping_app.exceptions.CategoryNotFoundException;
+import com.java.webdevelopment.shopping_app.exceptions.ProductsLinkedException;
 import com.java.webdevelopment.shopping_app.payload.CategoryDTO;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.DataResponse;
@@ -32,6 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageResponse<CategoryDTO> getPaginateCategory(Integer page, Integer pageSize) {
     
         Page<Category> categories = categoryRepository.findAll(PageUtil.request(page, pageSize));
@@ -48,6 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DataResponse<CategoryDTO> getAllCategory() {
         List<CategoryDTO> categoryDTOs = categoryRepository.findAll()
             .stream()
@@ -58,6 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryDTO getCategory(String id) {
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new CategoryNotFoundException(id));
@@ -65,18 +70,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        Category category = modelMapper.map(categoryDTO, Category.class);
-        category.setId(IdUtil.generate());
-        category.setName(categoryDTO.getName());
+        Category category = Category.builder()
+            .id(IdUtil.generateCompact())
+            .name(categoryDTO.getName())
+            .build();
         Category insertedCategory = categoryRepository.save(category);
         return modelMapper.map(insertedCategory, CategoryDTO.class);
     }
 
     @Override
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
+    @Transactional
+    public CategoryDTO updateCategory(String id, CategoryDTO categoryDTO) {
 
-        String id = categoryDTO.getId();
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new CategoryNotFoundException(id));
         
@@ -86,9 +93,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public ApiResponse deleteCategory(String id) {
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new CategoryNotFoundException(id));
+        
+        if(category.hasProducts()) {
+            throw new ProductsLinkedException();
+        }
+
         categoryRepository.delete(category);
         
         return new ApiResponse(

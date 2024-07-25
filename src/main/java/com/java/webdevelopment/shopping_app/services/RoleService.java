@@ -16,7 +16,7 @@ public interface RoleService {
 
     RoleDTO createRole(RoleDTO roleDTO);
 
-    RoleDTO updateRole(RoleDTO roleDTO);
+    RoleDTO updateRole(String id, RoleDTO roleDTO);
 
     ApiResponse deleteRole(String id);
 }

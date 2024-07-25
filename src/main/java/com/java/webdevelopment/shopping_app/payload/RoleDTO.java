@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class RoleDTO {
     private String code;
 
     @Size(min = 1)
+    @NotNull
     private Set<String> permissionCodes;
 
     public RoleDTO() {

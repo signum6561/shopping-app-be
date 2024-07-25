@@ -30,9 +30,9 @@ public class UserServiceTest {
     void prepare() {
         faker = new Faker();
         User user = User.builder()
-            .id("MlSpZnV0nhyfrW-_OWj5w")
+            .id("HzLKVwWPsrLAYRWlL5YGw")
             .email("example777@gmail.com")
-            .username("cuong69")
+            .username("admin")
             .build();
         userPrincipal = new UserPrincipal(user);
     }
@@ -66,26 +66,31 @@ public class UserServiceTest {
         UserRequest request = new UserRequest();
         request.setEmail("dasaf@gmail.com");
         request.setPassword("cuont235");
-        request.setUsername("thoai29");
+        request.setUsername("thoai20");
         UserResponse res = userService.updateUser(id, request);
         System.out.println(res);
     }
 
     @Test
     void testUpdateUserProfile() {
-        String id = "VCp9vhJq3hHm0GIqazH-e";
-        UserResponse userDto = new UserResponse();
-        // userDto.setEmail("thoai29");
-        // userDto.setPassword("exagfd7@gmail.com");
-        // userDto.setUsername("thoai29");
-        // UserResponse res = userService.updateUser(id, userDto);
-        // System.out.println(res);
+        UserInfoRequest request = new UserInfoRequest();
+        request.setEmail("dasaf@gmail.com");
+        request.setPassword("cuont235");
+        request.setUsername("thoai29");
+        UserResponse res = userService.updateProfile(userPrincipal, request);
+        System.out.println(res);
     }
 
     @Test
-    void testDeleteUserByUsername() {
-        String id = "MlSpZnV0nhyfrW-_OWj5w";
+    void testDeleteUser() {
+        String id = "VCp9vhJq3hHm0GIqazH-e";
         ApiResponse res = userService.deleteUser(id);
+        System.out.println(res);
+    }
+
+    @Test
+    void testSelfDelete() {
+        ApiResponse res = userService.selfDelete(userPrincipal);
         System.out.println(res);
     }
 

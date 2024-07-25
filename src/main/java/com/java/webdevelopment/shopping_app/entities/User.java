@@ -84,6 +84,13 @@ public class User {
 		roles.clear();
 	}
 
+    public Order getOrder(String id) {
+        return orders.stream()
+            .filter(o -> o.getId().equals(id))
+            .findFirst()
+            .orElse(null);
+    }
+
     @Override
     public String toString() {
         String orderIds = orders == null

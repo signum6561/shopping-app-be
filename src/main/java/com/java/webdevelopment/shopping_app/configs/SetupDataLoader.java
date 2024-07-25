@@ -59,11 +59,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Role userRole = createRoleIfNotFound(BaseRole.USER.toString(), "User");
 
         for (Resource resource : Resource.values()) {
-            String resourceName = resource.toString();
-            createPermissionIfNotFound("CREATE_" + resourceName);
-            createPermissionIfNotFound("READ_" + resourceName);
-            createPermissionIfNotFound("UPDATE_" + resourceName);
-            createPermissionIfNotFound("DELETE_" + resourceName);
+            String resourceCode = Resource.convertToCode(resource);
+            for (String permission : resource.getPermissions()) {
+                createPermissionIfNotFound(permission + resourceCode); 
+            }
         }
 
         for (String permssionCode : BaseRole.USER.getPermissions()) {

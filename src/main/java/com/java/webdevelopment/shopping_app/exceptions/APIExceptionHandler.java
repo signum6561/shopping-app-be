@@ -34,10 +34,20 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(ResourcesNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public ErrorResponse handleUserNotFound(ResourcesNotFoundException e){
+	public ErrorResponse handleResourceNotFound(ResourcesNotFoundException e){
 		ErrorResponse response = new ErrorResponse();
 		response.setStatus(HttpStatus.NOT_FOUND);
 		response.setType("not-found");
+		response.addError(e.getResourceName(), e.getMessage());
+		return response;
+	}
+
+	@ExceptionHandler(ResourceReferenceException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	public ErrorResponse handleResourceRef(ResourceReferenceException e){
+		ErrorResponse response = new ErrorResponse();
+		response.setStatus(HttpStatus.CONFLICT);
+		response.setType("conflict-references");
 		response.addError(e.getResourceName(), e.getMessage());
 		return response;
 	}

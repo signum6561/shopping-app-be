@@ -28,6 +28,8 @@ public class SercurityConfig {
         "/swagger-ui/**",
         "/api/v1/user/email-exist",
         "/api/v1/user/username-exist",
+        "/api/v1/category/o/**",
+        "/api/v1/product/o/**",
     };
 	
 	@Bean
