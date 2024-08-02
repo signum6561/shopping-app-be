@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
-import com.java.webdevelopment.shopping_app.interfaces.HasPermission;
 import com.java.webdevelopment.shopping_app.payload.CategoryDTO;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.DataResponse;
@@ -18,6 +17,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,7 +75,7 @@ public class CategoryController {
     }
 
     @PostMapping("")
-    @HasPermission("create:category")
+    @PreAuthorize("@authz.permission(#root, 'create:category')")
     public ResponseEntity<CategoryDTO> createCategory(
         @Valid @RequestBody CategoryDTO newCategory
     ) {
@@ -86,7 +86,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
-    @HasPermission("update:category")
+    @PreAuthorize("@authz.permission(#root, 'update:category')")
     public ResponseEntity<CategoryDTO> updateCategory(
         @Valid @RequestBody CategoryDTO updateCategory,
         @PathVariable String categoryId
@@ -96,7 +96,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
-    @HasPermission("delete:category")
+    @PreAuthorize("@authz.permission(#root, 'delete:category')")
     public ResponseEntity<ApiResponse> deleteCategory(
         @PathVariable String categoryId
     ) {

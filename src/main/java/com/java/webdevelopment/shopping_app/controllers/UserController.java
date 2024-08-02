@@ -2,6 +2,7 @@ package com.java.webdevelopment.shopping_app.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
 import com.java.webdevelopment.shopping_app.interfaces.CurrentUser;
-import com.java.webdevelopment.shopping_app.interfaces.HasPermission;
 import com.java.webdevelopment.shopping_app.payload.requests.UserInfoRequest;
 import com.java.webdevelopment.shopping_app.payload.requests.UserOrderRequest;
 import com.java.webdevelopment.shopping_app.payload.requests.UserRequest;
@@ -58,7 +58,7 @@ public class UserController {
 	}
 
 	@GetMapping("/profile/orders")
-	@HasPermission("read_own:order")
+	@PreAuthorize("@authz.permission(#root, 'read_own:order')")
 	public ResponseEntity<PageResponse<OrderResponse>> getCurrentUserOrders(
 		@RequestParam(required = false, defaultValue =  Contants.DEFAULT_PAGE_INDEX) Integer page,
 		@RequestParam(required = false, defaultValue = Contants.DEFAULT_PAGE_SIZE) Integer perPage,
@@ -69,7 +69,7 @@ public class UserController {
 	}
 
 	@PostMapping("/profile/orders")
-	@HasPermission("create_own:order")
+	@PreAuthorize("@authz.permission(#root, 'read_own:order')")
 	public ResponseEntity<OrderResponse> createUserOrder(
 		@Valid @RequestBody UserOrderRequest newOrder,
 		@CurrentUser UserPrincipal userPrincipal
@@ -79,7 +79,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/profile/orders/{orderId}")
-	@HasPermission("delete_own:order")
+	@PreAuthorize("@authz.permission(#root, 'delete_own:order')")
 	public ResponseEntity<ApiResponse> deleteCurrentUserOrder(
 		@PathVariable String orderId,
 		@CurrentUser UserPrincipal userPrincipal
@@ -89,7 +89,7 @@ public class UserController {
 	}
 
 	@GetMapping("/")
-	@HasPermission("read_all:user")
+	@PreAuthorize("@authz.permission(#root, 'read_all:user')")
 	public ResponseEntity<PageResponse<UserResponse>> getAllUser(
 		@RequestParam(required = false, defaultValue =  Contants.DEFAULT_PAGE_INDEX) Integer page,
 		@RequestParam(required = false, defaultValue = Contants.DEFAULT_PAGE_SIZE) Integer perPage
@@ -99,14 +99,14 @@ public class UserController {
 	}
 
 	@GetMapping("/{userId}")
-	@HasPermission("read_all:user")
+	@PreAuthorize("@authz.permission(#root, 'read_all:user')")
 	public ResponseEntity<UserResponse> getUser(@PathVariable String userId) {
 		UserResponse response = userService.getUser(userId);
 		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/")
-	@HasPermission("create:user")
+	@PreAuthorize("@authz.permission(#root, 'create:user')")
 	public ResponseEntity<UserResponse> createUser(
 			@Valid @RequestBody UserRequest newUser
 		) {
@@ -115,7 +115,7 @@ public class UserController {
 	}
 
 	@PutMapping("/{userId}")
-	@HasPermission("update:user")
+	@PreAuthorize("@authz.permission(#root, 'update:user')")
 	public ResponseEntity<UserResponse> updateUser(
 			@PathVariable String userId,
 			@Valid @RequestBody UserRequest updateUser, 
@@ -125,7 +125,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{userId}")
-	@HasPermission("delete:user")
+	@PreAuthorize("@authz.permission(#root, 'delete:user')")
 	public ResponseEntity<ApiResponse> deleteUser(@PathVariable String userId) {
 		ApiResponse response = userService.deleteUser(userId);
 		return ResponseEntity.ok(response);

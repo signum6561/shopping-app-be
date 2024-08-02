@@ -20,6 +20,7 @@ import com.java.webdevelopment.shopping_app.conventers.RoleNameListConventer;
 import com.java.webdevelopment.shopping_app.entities.Role;
 import com.java.webdevelopment.shopping_app.entities.User;
 import com.java.webdevelopment.shopping_app.enums.BaseRole;
+import com.java.webdevelopment.shopping_app.exceptions.AccessDeniedException;
 import com.java.webdevelopment.shopping_app.exceptions.EmailAlreadyExistException;
 import com.java.webdevelopment.shopping_app.exceptions.RoleNotFoundException;
 import com.java.webdevelopment.shopping_app.exceptions.SystemAdminDeleteException;
@@ -68,13 +69,6 @@ public class UserServiceImpl implements UserService {
                 UserResponse.class);
         entityToProfileResponse.addMappings(
                 mapper -> mapper.using(new RoleNameListConventer()).map(User::getRoles, UserResponse::setRoleNames));
-
-        TypeMap<UserResponse, User> dtoToEntity = modelMapper.createTypeMap(UserResponse.class, User.class);
-        dtoToEntity.addMappings(
-                mapper -> mapper.skip(User::setRoles));
-
-        dtoToEntity.addMappings(
-                mapper -> mapper.skip(User::setPassword));
     }
 
     @Override
@@ -209,6 +203,10 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(id));
+
+        if(user.getUsername().equals(SYS_ADMIN_USERNAME)) {
+            throw new AccessDeniedException();
+        }
             
         if(!user.getUsername().equals(username) && isUsernameExists(username)) {
             throw new UsernameAlreadyExistException(username);
@@ -232,7 +230,6 @@ public class UserServiceImpl implements UserService {
 
         user.setUsername(newUser.getUsername());
         user.setEmail(newUser.getEmail());
-        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         User updatedUser = userRepository.save(user);
         return modelMapper.map(updatedUser, UserResponse.class);
     }
@@ -247,6 +244,10 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(id));
+        
+        if(user.getUsername().equals(SYS_ADMIN_USERNAME)) {
+            throw new AccessDeniedException();
+        }
 
         if(!user.getUsername().equals(username) && isUsernameExists(username)) {
             throw new UsernameAlreadyExistException(username);

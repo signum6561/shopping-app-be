@@ -2,6 +2,7 @@ package com.java.webdevelopment.shopping_app.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
-import com.java.webdevelopment.shopping_app.interfaces.HasPermission;
 import com.java.webdevelopment.shopping_app.payload.requests.ProductRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.PageResponse;
@@ -53,7 +53,7 @@ public class ProductController {
     }
 
     @PostMapping("")
-    @HasPermission("create:product")
+    @PreAuthorize("@authz.permission(#root, 'create:product')")
     public ResponseEntity<ProductResponse> createProduct(
         @Valid @RequestBody ProductRequest newProduct
     ) {
@@ -64,7 +64,7 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
-    @HasPermission("update:product")
+    @PreAuthorize("@authz.permission(#root, 'update:product')")
     public ResponseEntity<ProductResponse> updateProduct(
         @Valid @RequestBody ProductRequest updateProduct,
         @PathVariable String productId 
@@ -74,7 +74,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
-    @HasPermission("delete:product")
+    @PreAuthorize("@authz.permission(#root, 'delete:product')")
     public ResponseEntity<ApiResponse> deleteProduct(
         @PathVariable String productId 
     ) {
