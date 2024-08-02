@@ -2,11 +2,11 @@ package com.java.webdevelopment.shopping_app.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
-import com.java.webdevelopment.shopping_app.interfaces.HasPermission;
 import com.java.webdevelopment.shopping_app.payload.RoleDTO;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.DataResponse;
@@ -43,7 +43,7 @@ public class RoleController {
     }
 
     @GetMapping("")
-    @HasPermission("read_all:role")
+    @PreAuthorize("@authz.permission(#root, 'read_all:role')")
     public ResponseEntity<?> getAllRole(
         @RequestParam(required = false, defaultValue =  Contants.DEFAULT_PAGE_INDEX) Integer page,
 		@RequestParam(required = false, defaultValue = Contants.DEFAULT_PAGE_SIZE) Integer perPage,
@@ -59,14 +59,14 @@ public class RoleController {
     }
 
     @GetMapping("/{roleId}")
-    @HasPermission("read:role")
+    @PreAuthorize("@authz.permission(#root, 'read_all:role')")
     public ResponseEntity<RoleDTO> getRole(@PathVariable String roleId) {
         RoleDTO response = roleService.getRole(roleId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users/{code}")
-    @HasPermission("read:role")
+    @PreAuthorize("@authz.permission(#root, 'read_all:role')")
     public ResponseEntity<PageResponse<UserResponse>> getUsersByRole(
         @RequestParam(required = false, defaultValue =  Contants.DEFAULT_PAGE_INDEX) Integer page,
 		@RequestParam(required = false, defaultValue = Contants.DEFAULT_PAGE_SIZE) Integer perPage,
@@ -77,7 +77,7 @@ public class RoleController {
     }
 
     @PostMapping("")
-    @HasPermission("create:role")
+    @PreAuthorize("@authz.permission(#root, 'create:role')")
     public ResponseEntity<RoleDTO> createRole(
         @Valid @RequestBody RoleDTO newRole
     ) {
@@ -88,7 +88,7 @@ public class RoleController {
     }
     
     @PutMapping("/{roleId}")
-    @HasPermission("update:role")
+    @PreAuthorize("@authz.permission(#root, 'update:role')")
     public ResponseEntity<RoleDTO> updateRole(
         @Valid @RequestBody RoleDTO updateRole,
         @PathVariable String roleId
@@ -98,7 +98,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{roleId}")
-    @HasPermission("delete:role")
+    @PreAuthorize("@authz.permission(#root, 'delete:role')")
     public ResponseEntity<ApiResponse> deleteRole(
         @PathVariable String roleId 
     ) {

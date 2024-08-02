@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.webdevelopment.shopping_app.constants.Contants;
-import com.java.webdevelopment.shopping_app.interfaces.HasPermission;
 import com.java.webdevelopment.shopping_app.payload.requests.OrderRequest;
 import com.java.webdevelopment.shopping_app.payload.responses.ApiResponse;
 import com.java.webdevelopment.shopping_app.payload.responses.OrderResponse;
@@ -15,6 +14,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +36,7 @@ public class OrderController {
     }
 
     @GetMapping("")
+    @PreAuthorize("@authz.permission(#root, 'read_all:order')")
     public ResponseEntity<PageResponse<OrderResponse>> getAllOrder(
         @RequestParam(required = false, defaultValue =  Contants.DEFAULT_PAGE_INDEX) Integer page,
 		@RequestParam(required = false, defaultValue = Contants.DEFAULT_PAGE_SIZE) Integer perPage
@@ -45,7 +46,7 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    @HasPermission("read_all:order")
+    @PreAuthorize("@authz.permission(#root, 'read_all:order')")
     public ResponseEntity<OrderResponse> getOrder(
         @PathVariable String orderId
     ) {
@@ -54,7 +55,7 @@ public class OrderController {
     }
 
     @PostMapping("")
-    @HasPermission("create:order")
+    @PreAuthorize("@authz.permission(#root, 'create:order')")
     public ResponseEntity<OrderResponse> createOrder(
         @Valid @RequestBody OrderRequest newOrder
     ) {
@@ -63,7 +64,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}")
-    @HasPermission("update:order")
+    @PreAuthorize("@authz.permission(#root, 'update:order')")
     public ResponseEntity<OrderResponse> updateOrder(
         @Valid @RequestBody OrderRequest updateOrder,
         @PathVariable String orderId
@@ -73,7 +74,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{orderId}")
-    @HasPermission("delete:order")
+    @PreAuthorize("@authz.permission(#root, 'delete:order')")
     public ResponseEntity<ApiResponse> deleteOrder(
         @PathVariable String orderId
     ) {
